@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/Toaster";
+import { ToastContainer } from "react-toastify";
 import { ThemeProvider } from "@/components/theme-provider";
+import Logo from "@/components/Logo";
 
 export const metadata: Metadata = {
   title: {
@@ -37,8 +39,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <div className="min-h-svh flex flex-col antialiased">
+            <div className="py-2 flex justify-center items-center bg-primary">
+              <Logo />
+            </div>
+            {children}
+          </div>
           <Toaster />
+          <ToastContainer />
         </ThemeProvider>
       </body>
     </html>

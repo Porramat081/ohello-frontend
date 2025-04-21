@@ -1,31 +1,29 @@
-"use client";
-
 import { Button } from "@/components/Button";
-import { toast } from "sonner";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import Mainboard from "@/components/MainBoard";
+import MenuUser from "@/components/MenuUser";
+import MenuUserButton from "@/components/MenuUserButton";
+import {
+  ChartArea,
+  EggFriedIcon,
+  Group,
+  Home,
+  MailOpen,
+  MessageCircle,
+  User,
+  Users,
+} from "lucide-react";
 
-export default function Home() {
-  const [isDark, setIsDark] = useState(false);
-
-  const { setTheme } = useTheme();
-
-  const toggleTheme = () => {
-    setIsDark((prev) => !prev);
-  };
-
-  const handleClick = () => {
-    toast("Hello, world!");
-  };
-
-  useEffect(() => {
-    setTheme(isDark ? "dark" : "light");
-  }, [isDark]);
-
+export default function MainPage() {
   return (
-    <div className="flex items-center justify-center">
-      <Button onClick={handleClick}>Test Toast</Button>
-      <Button onClick={toggleTheme}>Change Theme</Button>
+    <div className="grid grid-cols-1 sm:grid-cols-4">
+      <div className="flex justify-end border-r pr-1 min-h-svh">
+        <MenuUser />
+      </div>
+
+      <div className="col-span-2">
+        <Mainboard />
+      </div>
+      <div>thrid</div>
     </div>
   );
 }
