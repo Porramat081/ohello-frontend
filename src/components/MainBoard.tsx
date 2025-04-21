@@ -1,6 +1,9 @@
 "use client";
 
+import { SlidersHorizontal } from "lucide-react";
+import { Button } from "./Button";
 import { Carousel, CarouselContent, CarouselItem } from "./CardCarousel";
+import { Separator } from "./Separator";
 import StoryCard from "./StoryCard";
 
 const mockStory = [
@@ -38,7 +41,7 @@ const mockStory = [
 
 export default function Mainboard() {
   return (
-    <div className="bg-red-300">
+    <div>
       <h2 className="text-primary font-extrabold pl-3 pt-1">Home</h2>
       {/* Story Tab */}
       <Carousel className="flex items-center" opts={{ align: "center" }}>
@@ -53,6 +56,20 @@ export default function Mainboard() {
           ))}
         </CarouselContent>
       </Carousel>
+
+      {/* Feed tab */}
+      <div className="mt-4">
+        <div className="flex items-center justify-between p-2">
+          <h3 className="font-medium text-sm">All</h3>
+          <Button
+            variant={"ghost"}
+            className="h-auto p-0 cursor-pointer hover:bg-transparent"
+          >
+            <SlidersHorizontal size={24} />
+          </Button>
+        </div>
+        <Separator />
+      </div>
     </div>
   );
 }

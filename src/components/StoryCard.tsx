@@ -1,6 +1,7 @@
 import { StoryType } from "@/types/post";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./Card";
 import { Plus } from "lucide-react";
+import Image from "next/image";
 
 interface StoryCardProps {
   item?: StoryType;
@@ -20,12 +21,20 @@ export default function StoryCard(props: StoryCardProps) {
       className="w-25 overflow-hidden cursor-pointer h-30 flex flex-col justify-center items-center mx-auto hover:bg-secondary"
     >
       {props.isStart ? (
-        <div className="flex flex-col bg-amber-300 items-center justify-center gap-2">
+        <div className="flex flex-col items-center justify-center gap-2">
           <Plus className="size-5 text-primary/50" />
           <span className="text-primary/50 text-xs font-medium">Add Story</span>
         </div>
       ) : (
-        <div>{props.item?.author}</div>
+        <div>
+          <Image
+            src={props.item?.picUrl || ""}
+            alt="story photo"
+            className="object-cover"
+            width={100}
+            height={100}
+          />
+        </div>
       )}
     </Card>
   );

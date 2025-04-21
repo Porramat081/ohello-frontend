@@ -14,7 +14,7 @@ export default function MenuUserButton({ icon, title }: MenuUserButtonProps) {
   return (
     <Button
       variant={"ghost"}
-      className="cursor-pointer flex items-center justify-start pl-0 hover:bg-transparent hover:text-primary/50"
+      className="text-xs cursor-pointer flex items-center justify-start pl-0 hover:bg-transparent hover:text-primary/50"
     >
       {createElement(icon)}
       <span>{title}</span>
