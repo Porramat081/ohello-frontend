@@ -12,6 +12,7 @@ export type CommentType = {
 };
 
 export type PostType = {
+  id: string;
   authorName: string;
   authorID: string;
   authorPicture: string;

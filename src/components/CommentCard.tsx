@@ -1,12 +1,5 @@
 import { PostType } from "@/types/post";
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
-import { Button } from "./Button";
-import {
-  Bookmark,
-  CircleEllipsis,
-  Heart,
-  MessageSquareText,
-} from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -14,21 +7,30 @@ import {
   type CarouselApi,
 } from "./CardCarousel";
 import Image from "next/image";
+import Form from "next/form";
 import { useEffect, useState } from "react";
-import { Separator } from "./Separator";
-import Modal from "./Modal";
-import CommentCard from "./CommentCard";
+import { Textarea } from "./Textarea";
+import { useForm } from "@/hooks/useForm";
+import { createComment } from "@/actions/comment";
+import ErrorMessage from "./ErrorMessage";
+import SubmitBtn from "./SubmitBtn";
+import { Button } from "./Button";
+import { Eraser } from "lucide-react";
 
-interface PostCardProps {
+interface CommentCardProps {
   item: PostType;
+  onClose: (status: boolean) => void;
 }
 
-export default function PostCard({ item }: PostCardProps) {
+export default function CommentCard({ item, onClose }: CommentCardProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
 
-  const [isOpenComment, setIsOpenComment] = useState(false);
+  const [content, setContent] = useState("");
+
+  const { errors, formAction, isPending, state, clearErrors } =
+    useForm(createComment);
 
   useEffect(() => {
     if (!api) return;
@@ -39,9 +41,25 @@ export default function PostCard({ item }: PostCardProps) {
     });
   }, [api]);
 
+  useEffect(() => {
+    if (state.success) {
+      onClose(false);
+    }
+  }, [state, onClose]);
+
+  const handleSubmit = async (formData: FormData) => {
+    formData.append("post-id", item.id);
+    formData.append("comment-content", content);
+    return formAction(formData);
+  };
+
+  const handleClear = () => {
+    clearErrors();
+    setContent("");
+  };
+
   return (
-    <div className="flex flex-col w-full">
-      {/* PostCard Header */}
+    <div>
       <div className="flex justify-between items-center px-3 py-1">
         <div className="flex gap-3 items-center pt-2">
           <Avatar className="size-11 border-1">
@@ -64,16 +82,8 @@ export default function PostCard({ item }: PostCardProps) {
               year: "numeric",
             })}
           </span>
-
-          <Button
-            variant={"ghost"}
-            className="p-0 cursor-pointer h-auto hover:bg-transparent"
-          >
-            <CircleEllipsis />
-          </Button>
         </div>
       </div>
-      {/* PostCard Content */}
       <div className="py-2 px-3 text-[1.2rem] wrap-break-word text-justify">
         {item.content}
       </div>
@@ -98,46 +108,30 @@ export default function PostCard({ item }: PostCardProps) {
           </div>
         </Carousel>
       )}
-      {/* PostCard Footer */}
-      <div className="mt-4 mb-3">
-        <div className="flex items-center justify-between px-6">
-          <div className="flex items-center gap-3">
+
+      {/* Comment Input */}
+      <div className="mt-4 px-4">
+        <Form action={handleSubmit} onChange={clearErrors}>
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="say something to this post ..."
+            className="resize-none placeholder:text-foreground/50"
+          />
+          {errors.content && <ErrorMessage error={errors.content[0]} />}
+          <div className="mt-3 flex items-center justify-end gap-2">
+            <SubmitBtn name="Post Comment" pending={isPending} />
             <Button
-              variant={"ghost"}
-              className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer"
+              onClick={handleClear}
+              type="button"
+              className="cursor-pointer bg-red-400 text-primary-foreground"
             >
-              <Heart className="fill-primary text-primary" />
-              <span className="text-xs">{item.likes || 0}</span>
-            </Button>
-            <Button
-              onClick={() => setIsOpenComment(true)}
-              variant={"ghost"}
-              className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer"
-            >
-              <MessageSquareText />
-              <span className="text-xs">
-                {item.comments ? item.comments.length : 0}
-              </span>
+              <Eraser size={16} />
+              Clear
             </Button>
           </div>
-
-          <Button
-            variant={"ghost"}
-            className="p-0 h-auto hover:bg-transparent hover:cursor-pointer"
-          >
-            <Bookmark />
-          </Button>
-        </div>
+        </Form>
       </div>
-      <Separator />
-
-      <Modal
-        title="comment sectoion"
-        isOpen={isOpenComment}
-        onOpenChange={setIsOpenComment}
-      >
-        <CommentCard item={item} onClose={setIsOpenComment} />
-      </Modal>
     </div>
   );
 }

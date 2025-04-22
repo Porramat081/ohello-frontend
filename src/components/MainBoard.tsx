@@ -42,6 +42,7 @@ const mockStory = [
 
 const mockPost = [
   {
+    id: "agjrojorie5g959498gr95r",
     authorName: "name 1",
     authorID: "@nameOne",
     authorPicture:
