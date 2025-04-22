@@ -26,13 +26,12 @@ export default function StoryCard(props: StoryCardProps) {
           <span className="text-primary/50 text-xs font-medium">Add Story</span>
         </div>
       ) : (
-        <div>
+        <div className="relative w-full h-full">
           <Image
+            objectFit="cover"
             src={props.item?.picUrl || ""}
             alt="story photo"
-            className="object-cover"
-            width={100}
-            height={100}
+            fill
           />
         </div>
       )}
