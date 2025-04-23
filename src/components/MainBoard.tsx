@@ -6,6 +6,9 @@ import { Carousel, CarouselContent, CarouselItem } from "./CardCarousel";
 import { Separator } from "./Separator";
 import StoryCard from "./StoryCard";
 import PostCard from "./PostCard";
+import { useState } from "react";
+import Modal from "./Modal";
+import StoryModal from "./StoryModal";
 
 const mockStory = [
   {
@@ -70,12 +73,16 @@ const mockPost = [
 ];
 
 export default function Mainboard() {
+  const [openStory, setOpenStory] = useState(false);
   return (
     <div>
       <h2 className="text-primary font-extrabold pl-3 pt-1">Home</h2>
       {/* Story Tab */}
       <Carousel className="flex items-center" opts={{ align: "center" }}>
-        <CarouselItem className="basis-auto pr-3">
+        <CarouselItem
+          className="basis-auto pr-3"
+          onClick={() => setOpenStory(true)}
+        >
           <StoryCard isStart={true} />
         </CarouselItem>
         <CarouselContent className="py-2 pl-3">
@@ -106,6 +113,15 @@ export default function Mainboard() {
           ))}
         </div>
       </div>
+
+      <Modal
+        title="Story Post"
+        description="every post here will be gone in 24 hours"
+        isOpen={openStory}
+        onOpenChange={setOpenStory}
+      >
+        <StoryModal />
+      </Modal>
     </div>
   );
 }

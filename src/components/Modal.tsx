@@ -14,6 +14,7 @@ interface ModalProps {
   title: string;
   description?: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
 export default function Modal(props: ModalProps) {
@@ -26,9 +27,8 @@ export default function Modal(props: ModalProps) {
         </DialogHeader>
 
         {props.children}
-        <DialogFooter>
-          <div>Submit Comment</div>
-        </DialogFooter>
+
+        {props.footer && <DialogFooter>{props.footer}</DialogFooter>}
       </DialogContent>
     </Dialog>
   );
