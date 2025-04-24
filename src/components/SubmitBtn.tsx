@@ -5,6 +5,7 @@ interface SubmitBtnProps {
   name: string;
   pending?: boolean;
   icon?: LucideIcon;
+  addclassname?: string;
 }
 
 export default function SubmitBtn({
@@ -18,7 +19,7 @@ export default function SubmitBtn({
     <Button
       disabled={pending}
       type="submit"
-      className="cursor-pointer"
+      className={`cursor-pointer ${props.addclassname || ""}`}
       {...props}
     >
       {pending ? (

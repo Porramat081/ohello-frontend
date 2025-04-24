@@ -9,11 +9,14 @@ import { Eye, EyeClosed, Save } from "lucide-react";
 import { useState } from "react";
 import SubmitBtn from "./SubmitBtn";
 import { Separator } from "./Separator";
+import Link from "next/link";
+import { SessionProvider, signIn, useSession } from "next-auth/react";
 
 export default function SignUpForm() {
   const { errors, formAction, isPending, clearErrors } = useForm(createUser);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   return (
     <Form action={formAction} className="px-4">
       <div className="flex flex-col gap-3 mb-5">
@@ -63,7 +66,7 @@ export default function SignUpForm() {
             name="email"
             id="email"
             placeholder="example@domain.com"
-            className="bg-foreground/10 placeholder:text-gray-300"
+            className="bg-foreground/10 placeholder:text-gray-400"
           ></Input>
           {errors.email && <ErrorMessage error={errors.email.join(",")} />}
         </div>
@@ -81,7 +84,7 @@ export default function SignUpForm() {
               name="password"
               id="password"
               placeholder=""
-              className="bg-foreground/10 relative"
+              className="bg-foreground/10"
             ></Input>
             <Button
               onClick={() => setShowPassword((prev) => !prev)}
@@ -133,11 +136,29 @@ export default function SignUpForm() {
       <SubmitBtn name="Submit" pending={isPending} icon={Save} />
       <div className="my-4 text-xs text-foreground font-bold">
         Already have an account ?{" "}
-        <span className="text-primary cursor-pointer hover:underline">
-          Login
-        </span>
+        <Link href={"/auth/signin"}>
+          <span className="text-primary cursor-pointer hover:underline">
+            Login
+          </span>
+        </Link>
       </div>
       <Separator />
+      <div className="text-xs font-bold text-foreground">Or</div>
+
+      <Button
+        type="button"
+        onClick={async (e) => {
+          try {
+            e.preventDefault();
+            const result = await signIn("google");
+            console.log(result);
+          } catch (error) {
+            console.error(error);
+          }
+        }}
+      >
+        Sign Up With Google
+      </Button>
     </Form>
   );
 }

@@ -39,12 +39,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
           enableSystem
           disableTransitionOnChange
         >
-          <div className="min-h-svh flex flex-col antialiased">
-            <div className="py-2 flex justify-center items-center bg-primary">
+          <div className="min-h-svh antialiased relative">
+            <div className="py-2 flex justify-center items-center bg-primary sticky top-0 left-0 w-full z-30">
               <Logo />
             </div>
             {children}
           </div>
+
           <Toaster />
           <ToastContainer />
         </ThemeProvider>
