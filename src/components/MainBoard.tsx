@@ -70,6 +70,58 @@ const mockPost = [
     ],
     likes: 4,
   },
+  {
+    id: "agjrojorie5g959498gr95r",
+    authorName: "name 1",
+    authorID: "@nameOne",
+    authorPicture:
+      "https://cdn.pixabay.com/photo/2018/08/28/12/41/avatar-3637425_1280.png",
+    content:
+      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Impedit enim ullam magni sequi vitae quisquam molestiae, id et debitis tempora.",
+    picUrls: [
+      "https://cdn.pixabay.com/photo/2025/04/16/19/05/great-tit-9538381_1280.jpg",
+      "https://cdn.pixabay.com/photo/2025/04/14/00/54/chameleon-9532496_1280.jpg",
+    ],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    comments: [
+      {
+        authorName: "comment 1",
+        authorID: "@comment1",
+        authorPicture:
+          "https://cdn.pixabay.com/photo/2014/04/03/10/44/avatar-311292_1280.png",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ],
+    likes: 4,
+  },
+  {
+    id: "agjrojorie5g959498gr95r",
+    authorName: "name 1",
+    authorID: "@nameOne",
+    authorPicture:
+      "https://cdn.pixabay.com/photo/2018/08/28/12/41/avatar-3637425_1280.png",
+    content:
+      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Impedit enim ullam magni sequi vitae quisquam molestiae, id et debitis tempora.",
+    picUrls: [
+      "https://cdn.pixabay.com/photo/2025/04/16/19/05/great-tit-9538381_1280.jpg",
+      "https://cdn.pixabay.com/photo/2025/04/14/00/54/chameleon-9532496_1280.jpg",
+    ],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    comments: [
+      {
+        authorName: "comment 1",
+        authorID: "@comment1",
+        authorPicture:
+          "https://cdn.pixabay.com/photo/2014/04/03/10/44/avatar-311292_1280.png",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ],
+    likes: 4,
+  },
 ];
 
 export default function Mainboard() {

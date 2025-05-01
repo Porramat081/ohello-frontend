@@ -30,7 +30,7 @@ const ListItem = () => {
   );
 };
 
-const listFriend = [1, 2, 3];
+const listFriend = [1, 2, 3, 4];
 
 export default function FriendTable({ cat }: { cat: string }) {
   return (
