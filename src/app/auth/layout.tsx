@@ -7,10 +7,10 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="grid grid-cols-2 mx-auto min-h-[600px] rounded-xl overflow-hidden border-2 mt-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 mx-auto min-h-[600px] rounded-xl overflow-hidden border-2 mt-8 max-w-3xl">
       <div className="col-span-1 bg-secondary flex flex-col justify-center items-center text-center p-10">
         <h1 className="text-4xl font-bold text-purple-700 mb-6">ohello</h1>
-        <div className="w-full h-auto aspect-video relative">
+        <div className="w-full h-auto aspect-video relative hidden md:block">
           <Image
             src="/info_1.jpg" // Replace with your SVG/PNG path
             alt="Illustration"
@@ -28,7 +28,7 @@ export default function AuthLayout({
         </ul>
       </div>
 
-      <div className="col-span-1">{children}</div>
+      <div className="col-span-1 order-first md:order-last">{children}</div>
     </div>
   );
 }

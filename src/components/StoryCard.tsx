@@ -22,8 +22,10 @@ export default function StoryCard(props: StoryCardProps) {
     >
       {props.isStart ? (
         <div className="flex flex-col items-center justify-center gap-2">
-          <Plus className="size-5 text-primary/50" />
-          <span className="text-primary/50 text-xs font-medium">Add Story</span>
+          <Plus className="size-5 text-primary/50 dark:text-white" />
+          <span className="text-primary/50 text-xs font-medium dark:text-white">
+            Add Story
+          </span>
         </div>
       ) : (
         <div className="relative w-full h-full">

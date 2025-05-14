@@ -1,5 +1,6 @@
 import { Avatar, AvatarImage, AvatarFallback } from "./Avatar";
-import { Camera, Share, UserPlus2 } from "lucide-react";
+import { Camera, LogOut, MessageCircle, UserPlus2 } from "lucide-react";
+import { redirect } from "next/navigation";
 import Image from "next/image";
 import { Button } from "./Button";
 
@@ -7,16 +8,20 @@ interface ProfileCoverProps {
   imgSrc: string | undefined;
 }
 
+const isUser = true;
+const isFriend = true;
+
 export default function ProfileCover({ imgSrc }: ProfileCoverProps) {
   const handleAddCoverImg = () => {};
+  const handleLogout = () => {};
   return (
-    <div className="relative h-[200px]">
+    <div className="relative h-[200px] w-auto">
       {imgSrc ? (
         <Image
           src={imgSrc}
           alt="profile-cover"
           fill
-          className="absolute top-0 left-0 object-cover"
+          className="absolute top-0 left-0 object-fill aspect-video"
         />
       ) : (
         <div className="flex items-center justify-center h-full bg-secondary ">
@@ -45,7 +50,12 @@ export default function ProfileCover({ imgSrc }: ProfileCoverProps) {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="text-primary font-extrabold">John Doe</span>
+            <span
+              className="text-primary font-extrabold"
+              style={{ WebkitTextStroke: "0.1px white" }}
+            >
+              John Doe
+            </span>
             <span className="text-xs font-semibold text-foreground">
               @JohnDoeqq
             </span>
@@ -53,16 +63,30 @@ export default function ProfileCover({ imgSrc }: ProfileCoverProps) {
         </div>
       </div>
 
-      <div className="absolute bottom-[-3rem] md:bottom-0 translate-y-[50%] right-0 md:right-6">
-        <div className="flex gap-2">
-          <Button>
-            <UserPlus2 size={16} />
-            Add
-          </Button>
-          <Button variant={"outline"}>
-            <Share size={16} />
-            Share
-          </Button>
+      <div className="absolute bottom-[-3rem] lg:bottom-0 translate-y-[50%] right-0 lg:right-6">
+        <div className="flex gap-2 pr-2 lg:pr-0">
+          {isUser ? (
+            <Button
+              variant={"destructive"}
+              onClick={() => redirect("/auth/signin")}
+            >
+              <LogOut size={16} />
+              Logout
+            </Button>
+          ) : (
+            isFriend && (
+              <>
+                <Button>
+                  <UserPlus2 size={16} />
+                  Add
+                </Button>
+                <Button variant={"outline"}>
+                  <MessageCircle size={16} />
+                  Chat
+                </Button>
+              </>
+            )
+          )}
         </div>
       </div>
     </div>
