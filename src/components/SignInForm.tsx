@@ -7,11 +7,19 @@ import { Eye, EyeClosed, LogIn } from "lucide-react";
 import SubmitBtn from "./SubmitBtn";
 import { Separator } from "./Separator";
 import Link from "next/link";
+import { useForm } from "@/hooks/useForm";
+import { signinUserAction } from "@/actions/user";
+import ErrorMessage from "./ErrorMessage";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const { formAction, isPending, errors, clearErrors } = useForm(
+    signinUserAction,
+    "/"
+  );
+
   return (
-    <Form action="" className="px-4">
+    <Form action={formAction} onChange={clearErrors} className="px-4">
       <div className="flex flex-col gap-3 mb-5">
         <div>
           <Label
@@ -21,12 +29,17 @@ export default function SignInForm() {
             Email / Username <span className="text-red-500">*</span>
           </Label>
           <Input
+            required
             name="email-username"
             id="email-username"
             placeholder="email or username"
-            className="bg-foreground/10 placeholder:text-gray-400"
+            className={`bg-foreground/10 placeholder:text-gray-400 ${
+              errors["email"] && "border border-red-500"
+            }`}
           ></Input>
-          {}
+          {errors["email"] && (
+            <ErrorMessage error={errors["email"].join(",")} />
+          )}
         </div>
         <div>
           <Label
@@ -35,12 +48,21 @@ export default function SignInForm() {
           >
             Password <span className="text-red-500">*</span>
           </Label>
-          <div className="relative">
+          <div className="relative mb-2">
             <Input
+              required
+              type={showPassword ? "text" : "password"}
               name="login-password"
               id="login-password"
-              className="bg-foreground/10"
+              className={`bg-foreground/10 ${
+                errors["password"] && "border border-red-500"
+              }`}
             ></Input>
+            {errors["password"] && (
+              <div className="absolute bottom-[-22]">
+                <ErrorMessage error={errors["password"].join(",")} />
+              </div>
+            )}
             <Button
               onClick={() => setShowPassword((prev) => !prev)}
               type="button"
@@ -54,7 +76,7 @@ export default function SignInForm() {
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <SubmitBtn name="Login" icon={LogIn} />
+        <SubmitBtn name="Login" icon={LogIn} pending={isPending} />
         <span className="text-xs underline hover:text-primary cursor-pointer">
           Forget Password?
         </span>

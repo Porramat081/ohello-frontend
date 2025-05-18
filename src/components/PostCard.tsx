@@ -18,17 +18,25 @@ import { useEffect, useState } from "react";
 import { Separator } from "./Separator";
 import Modal from "./Modal";
 import CommentCard from "./CommentCard";
+import { redirect } from "next/navigation";
 
 interface PostCardProps {
   item: PostType;
+  isGuest: boolean;
 }
 
-export default function PostCard({ item }: PostCardProps) {
+export default function PostCard({ item, isGuest }: PostCardProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
 
   const [isOpenComment, setIsOpenComment] = useState(false);
+
+  const handleLike = () => {
+    if (isGuest) {
+      redirect("/auth/signin");
+    }
+  };
 
   useEffect(() => {
     if (!api) return;
@@ -65,12 +73,14 @@ export default function PostCard({ item }: PostCardProps) {
             })}
           </span>
 
-          <Button
-            variant={"ghost"}
-            className="p-0 cursor-pointer h-auto hover:bg-transparent"
-          >
-            <CircleEllipsis />
-          </Button>
+          {!isGuest && (
+            <Button
+              variant={"ghost"}
+              className="p-0 cursor-pointer h-auto hover:bg-transparent"
+            >
+              <CircleEllipsis />
+            </Button>
+          )}
         </div>
       </div>
       {/* PostCard Content */}
@@ -103,6 +113,7 @@ export default function PostCard({ item }: PostCardProps) {
         <div className="flex items-center justify-between px-6">
           <div className="flex items-center gap-3">
             <Button
+              onClick={handleLike}
               variant={"ghost"}
               className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer"
             >
@@ -136,7 +147,7 @@ export default function PostCard({ item }: PostCardProps) {
         isOpen={isOpenComment}
         onOpenChange={setIsOpenComment}
       >
-        <CommentCard item={item} onClose={setIsOpenComment} />
+        <CommentCard item={item} onClose={setIsOpenComment} isGuest={isGuest} />
       </Modal>
     </div>
   );

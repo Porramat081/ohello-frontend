@@ -20,9 +20,9 @@ interface ModalProps {
 export default function Modal(props: ModalProps) {
   return (
     <Dialog onOpenChange={props.onOpenChange} open={props.isOpen}>
-      <DialogContent>
+      <DialogContent className="w-full sm:min-w-[500px] lg:min-w-[1000px]">
         <DialogHeader>
-          <DialogTitle>{props.title}</DialogTitle>
+          <DialogTitle className="text-start">{props.title}</DialogTitle>
           <DialogDescription>{props.description}</DialogDescription>
         </DialogHeader>
 

@@ -2,7 +2,7 @@ import Form from "next/form";
 import { Label } from "./Label";
 import { Input } from "./Input";
 import { useForm } from "@/hooks/useForm";
-import { createUser } from "@/actions/signup";
+import { createUser } from "@/actions/user";
 import ErrorMessage from "./ErrorMessage";
 import { Button } from "./Button";
 import { Eye, EyeClosed, Save } from "lucide-react";

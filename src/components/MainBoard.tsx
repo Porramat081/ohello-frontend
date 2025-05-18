@@ -9,6 +9,7 @@ import PostCard from "./PostCard";
 import { useState } from "react";
 import Modal from "./Modal";
 import StoryModal from "./StoryModal";
+import { useUser } from "@/providers/UserProvider";
 
 const mockStory = [
   {
@@ -126,42 +127,47 @@ const mockPost = [
 
 export default function Mainboard() {
   const [openStory, setOpenStory] = useState(false);
+  const user = useUser();
   return (
     <div>
       <h2 className="text-primary font-extrabold pl-3 pt-1">Home</h2>
       {/* Story Tab */}
-      <Carousel className="flex items-center" opts={{ align: "center" }}>
-        <CarouselItem
-          className="basis-auto pr-3"
-          onClick={() => setOpenStory(true)}
-        >
-          <StoryCard isStart={true} />
-        </CarouselItem>
-        <CarouselContent className="py-2 pl-3">
-          {mockStory.map((item, index) => (
-            <CarouselItem className="pr-2 basis-auto" key={index}>
-              <StoryCard item={item} />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      {user && (
+        <Carousel className="flex items-center" opts={{ align: "center" }}>
+          <CarouselItem
+            className="basis-auto pr-3"
+            onClick={() => setOpenStory(true)}
+          >
+            <StoryCard isStart={true} />
+          </CarouselItem>
+          <CarouselContent className="py-2 pl-3">
+            {mockStory.map((item, index) => (
+              <CarouselItem className="pr-2 basis-auto" key={index}>
+                <StoryCard item={item} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      )}
 
       {/* Feed tab */}
       <div className="mt-4">
         <div className="flex items-center justify-between p-2">
           <h3 className="font-medium text-sm">All</h3>
-          <Button
-            variant={"ghost"}
-            className="h-auto p-0 cursor-pointer hover:bg-transparent"
-          >
-            <SlidersHorizontal size={24} />
-          </Button>
+          {user && (
+            <Button
+              variant={"ghost"}
+              className="h-auto p-0 cursor-pointer hover:bg-transparent"
+            >
+              <SlidersHorizontal size={24} />
+            </Button>
+          )}
         </div>
         <Separator />
 
         <div className="flex flex-col gap-2">
           {mockPost.map((item, index) => (
-            <PostCard key={index} item={item} />
+            <PostCard key={index} item={item} isGuest={!user} />
           ))}
         </div>
       </div>

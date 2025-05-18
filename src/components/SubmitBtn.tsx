@@ -25,10 +25,9 @@ export default function SubmitBtn({
       {pending ? (
         <Loader2 size={16} className="animate-spin" />
       ) : (
-        <>
-          {Icon && <Icon size={16} />} {name}
-        </>
+        <>{Icon && <Icon size={16} />}</>
       )}
+      {name}
     </Button>
   );
 }

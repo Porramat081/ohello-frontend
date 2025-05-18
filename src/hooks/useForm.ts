@@ -20,7 +20,6 @@ export const useForm = (action: ActionType, route?: string) => {
         toast.success(state.message);
         if (route) router.push(route);
       } else {
-        console.log(errors);
         toast.error(state.message);
       }
     }

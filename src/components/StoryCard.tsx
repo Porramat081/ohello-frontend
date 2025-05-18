@@ -30,7 +30,7 @@ export default function StoryCard(props: StoryCardProps) {
       ) : (
         <div className="relative w-full h-full">
           <Image
-            objectFit="cover"
+            className="object-cover"
             src={props.item?.picUrl || ""}
             alt="story photo"
             fill
