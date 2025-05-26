@@ -2,6 +2,7 @@ export interface InitialFormState {
   success: boolean;
   message: string;
   errors?: Record<string, string[]>;
+  value?: any;
 }
 
 export const initialFormState: InitialFormState = {

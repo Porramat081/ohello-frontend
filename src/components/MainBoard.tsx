@@ -151,8 +151,8 @@ export default function Mainboard() {
       )}
 
       {/* Feed tab */}
-      <div className="mt-4">
-        <div className="flex items-center justify-between p-2">
+      <div className="mt-4 relative">
+        <div className="flex sticky top-[0.03rem] z-10 items-center justify-between p-2 bg-background">
           <h3 className="font-medium text-sm">All</h3>
           {user && (
             <Button

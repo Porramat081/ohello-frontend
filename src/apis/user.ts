@@ -6,12 +6,12 @@ interface UserSigninInput {
   password: string;
 }
 
-interface UserSignupInput {
-  fname: string;
-  sname: string;
+export interface UserSignupInput {
+  firstName: string;
+  surname: string;
   email: string;
   password: string;
-  conFirmPassword: string;
+  confirmPassword: string;
 }
 
 export const authCheck = async () => {
@@ -25,13 +25,11 @@ export const getMe = async () => {
 };
 
 export const userSignin = async (data: UserSigninInput) => {
-  try {
-    const result = await axiosInstance.post("/user/signin", data);
-    return result.data;
-  } catch (error) {
-    throw (error as { response: { data: { message: string } } }).response.data
-      .message;
-  }
+  const result = await axiosInstance.post("/user/signin", data);
+  return result.data;
 };
 
-export const userSignUp = async (data: UserSignupInput) => {};
+export const userSignUp = async (data: UserSignupInput) => {
+  const result = await axiosInstance.post("/user/signup", data);
+  return result.data;
+};

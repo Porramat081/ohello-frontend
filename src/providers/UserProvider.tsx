@@ -1,6 +1,7 @@
 "use client";
 
 import { getMe } from "@/apis/user";
+import { errorAxios } from "@/lib/errorHandle";
 import { UserType } from "@/types/user";
 import {
   createContext,
@@ -16,12 +17,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
 
   const fetchUser = async () => {
-    const res = await getMe();
-    if (res.data) {
-      setUser(res.data);
-      return;
+    try {
+      const res = await getMe();
+      if (res.data) {
+        setUser(res.data);
+        return;
+      }
+      setUser(null);
+    } catch (error) {
+      errorAxios(error);
     }
-    setUser(null);
   };
 
   useEffect(() => {

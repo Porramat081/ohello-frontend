@@ -16,8 +16,10 @@ export default function MainLayout({
         {user && <MenuUser />}
       </div>
       <div
-        className={`col-span-4 ${
-          user ? "lg:col-span-5" : "lg:col-span-6"
+        className={`${
+          user
+            ? "col-span-4 lg:col-span-5"
+            : "col-span-6 col-start-2 border-l border-r"
         } h-screen overflow-auto hide-scrollbar`}
       >
         {children}

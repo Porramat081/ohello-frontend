@@ -5,20 +5,31 @@ import { useForm } from "@/hooks/useForm";
 import { createUser } from "@/actions/user";
 import ErrorMessage from "./ErrorMessage";
 import { Button } from "./Button";
-import { Eye, EyeClosed, Save } from "lucide-react";
-import { useState } from "react";
+import { Eye, EyeClosed, Save, BrushIcon } from "lucide-react";
+import { useRef, useState } from "react";
 import SubmitBtn from "./SubmitBtn";
 import { Separator } from "./Separator";
 import Link from "next/link";
 import { SessionProvider, signIn, useSession } from "next-auth/react";
+import { genInputFormClass } from "@/lib/utils";
 
 export default function SignUpForm() {
-  const { errors, formAction, isPending, clearErrors } = useForm(createUser);
+  const { errors, formAction, isPending, state, clearErrors } = useForm(
+    createUser,
+    "/"
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const handleClearForm = () => {
+    formRef.current?.reset();
+    state.value = {};
+    clearErrors();
+  };
   return (
-    <Form action={formAction} className="px-4">
+    <Form className="px-4" ref={formRef} action={formAction}>
       <div className="flex flex-col gap-3 mb-5">
         <div>
           <Label
@@ -28,14 +39,17 @@ export default function SignUpForm() {
             Firstname <span className="text-red-500">*</span>
           </Label>
           <Input
+            required
             name="firstname"
             id="firstname"
+            defaultValue={state.value?.firstName}
             placeholder=""
-            className="bg-foreground/10"
+            className={genInputFormClass(
+              !!errors.firstName,
+              "bg-foreground/10"
+            )}
           />
-          {errors.firstname && (
-            <ErrorMessage error={errors.firstname.join(",")} />
-          )}
+          {errors.firstName && <ErrorMessage error={errors.firstName} />}
         </div>
 
         <div>
@@ -46,12 +60,14 @@ export default function SignUpForm() {
             Surname <span className="text-red-500">*</span>
           </Label>
           <Input
+            required
             name="surname"
             id="surname"
             placeholder=""
-            className="bg-foreground/10"
+            className={genInputFormClass(!!errors.surname, "bg-foreground/10")}
+            defaultValue={state.value?.surname}
           />
-          {errors.surname && <ErrorMessage error={errors.surname.join(",")} />}
+          {errors.surname && <ErrorMessage error={errors.surname} />}
         </div>
 
         <div>
@@ -62,13 +78,18 @@ export default function SignUpForm() {
             Email <span className="text-red-500">*</span>
           </Label>
           <Input
+            required
             type="email"
             name="email"
             id="email"
+            defaultValue={state.value?.email}
             placeholder="example@domain.com"
-            className="bg-foreground/10 placeholder:text-gray-400"
+            className={genInputFormClass(
+              !!errors.email,
+              "bg-foreground/10 placeholder:text-gray-400"
+            )}
           ></Input>
-          {errors.email && <ErrorMessage error={errors.email.join(",")} />}
+          {errors.email && <ErrorMessage error={errors.email} />}
         </div>
 
         <div>
@@ -80,11 +101,15 @@ export default function SignUpForm() {
           </Label>
           <div className="relative">
             <Input
+              required
               type={showPassword ? "text" : "password"}
               name="password"
               id="password"
-              placeholder=""
-              className="bg-foreground/10"
+              className={genInputFormClass(
+                !!errors.password,
+                "bg-foreground/10 pr-8 overflow-y-auto"
+              )}
+              defaultValue={state.value?.password}
             ></Input>
             <Button
               onClick={() => setShowPassword((prev) => !prev)}
@@ -95,9 +120,7 @@ export default function SignUpForm() {
               {showPassword ? <Eye size={10} /> : <EyeClosed size={10} />}
             </Button>
           </div>
-          {errors.password && (
-            <ErrorMessage error={errors.password.join(",")} />
-          )}
+          {errors.password && <ErrorMessage error={errors.password} />}
         </div>
 
         <div>
@@ -109,11 +132,15 @@ export default function SignUpForm() {
           </Label>
           <div className="relative">
             <Input
+              required
               type={showConfirmPassword ? "text" : "password"}
               name="confirm-password"
               id="confirm-password"
-              placeholder=""
-              className="bg-foreground/10 relative"
+              className={genInputFormClass(
+                !!errors.password,
+                "bg-foreground/10 pr-8 overflow-y-auto"
+              )}
+              defaultValue={state.value?.confirmPassword}
             ></Input>
             <Button
               onClick={() => setShowConfirmPassword((prev) => !prev)}
@@ -128,12 +155,17 @@ export default function SignUpForm() {
               )}
             </Button>
           </div>
-          {errors.password && (
-            <ErrorMessage error={errors.password.join(",")} />
+          {errors.confirmPassword && (
+            <ErrorMessage error={errors.confirmPassword} />
           )}
         </div>
       </div>
-      <SubmitBtn name="Submit" pending={isPending} icon={Save} />
+      <div>
+        <SubmitBtn name="Submit" pending={isPending} icon={Save} />
+        <Button onClick={handleClearForm} className="" type="button">
+          <BrushIcon />
+        </Button>
+      </div>
       <div className="my-4 text-xs text-foreground font-bold">
         Already have an account ?{" "}
         <Link href={"/auth/signin"}>
@@ -143,7 +175,7 @@ export default function SignUpForm() {
         </Link>
       </div>
       <Separator />
-      <div className="text-xs font-bold text-foreground">Or</div>
+      <div className="text-xs font-bold text-foreground mb-3">Or</div>
 
       <Button
         type="button"

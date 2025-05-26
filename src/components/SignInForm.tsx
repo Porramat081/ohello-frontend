@@ -63,6 +63,7 @@ export default function SignInForm() {
                 <ErrorMessage error={errors["password"].join(",")} />
               </div>
             )}
+
             <Button
               onClick={() => setShowPassword((prev) => !prev)}
               type="button"
@@ -72,7 +73,6 @@ export default function SignInForm() {
               {showPassword ? <Eye size={10} /> : <EyeClosed size={10} />}
             </Button>
           </div>
-          {}
         </div>
       </div>
       <div className="flex items-center justify-between">

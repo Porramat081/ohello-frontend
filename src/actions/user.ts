@@ -1,12 +1,55 @@
-import { userSignin } from "@/apis/user";
-import { signInSchema } from "@/schemas/schemaForm";
+import { userSignin, userSignUp, UserSignupInput } from "@/apis/user";
+import { signInSchema, signUpSchema } from "@/schemas/schemaForm";
 import { InitialFormState } from "@/types/action";
+
+interface ErrorResponse {
+  email: string;
+  password: string;
+  firstName: string;
+  surName: string;
+}
 
 export const createUser = async (
   _prevState: InitialFormState,
   formData: FormData
 ) => {
-  return { success: true, message: "raegrg" };
+  const rawData = {
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+    confirmPassword: formData.get("confirm-password") as string,
+    firstName: formData.get("firstname") as string,
+    surname: formData.get("surname") as string,
+  };
+  try {
+    const { success, data, error } = signUpSchema.safeParse(rawData);
+
+    if (!success) {
+      return {
+        success: false,
+        message: "Please enter valid information",
+        errors: error?.flatten().fieldErrors,
+        value: rawData,
+      };
+    }
+
+    const result = await userSignUp(data);
+
+    return result && result.message
+      ? {
+          success: false,
+          message: result.message,
+          errors: result.error,
+        }
+      : { success: true, message: "Register Success" };
+  } catch (error: { message: string } | unknown) {
+    return {
+      success: false,
+      message:
+        (error as { message: string }).message ||
+        "There's an error in user sign-up process.",
+      errors: (error as { response: { data: ErrorResponse } }).response.data,
+    };
+  }
 };
 
 export const signinUserAction = async (
