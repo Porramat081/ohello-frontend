@@ -15,16 +15,24 @@ import { Button } from "./Button";
 import Modal from "./Modal";
 import PostModal from "./PostModal";
 import { useState } from "react";
+import { UserType } from "@/types/user";
+import { genAbbration } from "@/lib/utils";
 
-export default function MenuUser() {
+interface MenuUserProps {
+  user: UserType;
+}
+
+export default function MenuUser({ user }: MenuUserProps) {
   const [openModal, setOpenModal] = useState(false);
 
   return (
     <div className="flex items-start flex-col gap-5">
       <div className="pt-2 px-2 mb-3">
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
+        <Avatar className="border border-foreground size-13">
+          <AvatarImage src={user.profilePicUrl} />
+          <AvatarFallback className="text-2xl font-semibold">
+            {genAbbration(user.firstName, user.surname)}
+          </AvatarFallback>
         </Avatar>
       </div>
       <MenuUserButton icon={Home} title="Home" href="/" />

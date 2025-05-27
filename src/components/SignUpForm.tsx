@@ -29,7 +29,7 @@ export default function SignUpForm() {
     clearErrors();
   };
   return (
-    <Form className="px-4" ref={formRef} action={formAction}>
+    <Form autoComplete="on" className="px-4" ref={formRef} action={formAction}>
       <div className="flex flex-col gap-3 mb-5">
         <div>
           <Label
@@ -102,6 +102,7 @@ export default function SignUpForm() {
           <div className="relative">
             <Input
               required
+              autoComplete="new-password"
               type={showPassword ? "text" : "password"}
               name="password"
               id="password"
@@ -133,6 +134,7 @@ export default function SignUpForm() {
           <div className="relative">
             <Input
               required
+              autoComplete="new-password"
               type={showConfirmPassword ? "text" : "password"}
               name="confirm-password"
               id="confirm-password"
@@ -160,10 +162,16 @@ export default function SignUpForm() {
           )}
         </div>
       </div>
-      <div>
+      <div className="flex items-center justify-between">
         <SubmitBtn name="Submit" pending={isPending} icon={Save} />
-        <Button onClick={handleClearForm} className="" type="button">
+        <Button
+          variant={"destructive"}
+          onClick={handleClearForm}
+          className="cursor-pointer"
+          type="button"
+        >
           <BrushIcon />
+          Clear Form
         </Button>
       </div>
       <div className="my-4 text-xs text-foreground font-bold">

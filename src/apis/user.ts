@@ -20,7 +20,7 @@ export const authCheck = async () => {
 };
 
 export const getMe = async () => {
-  const result = await axiosInstance.get("/user/getMe");
+  const result = await axiosInstance.get("/api/user");
   return result;
 };
 
@@ -30,6 +30,6 @@ export const userSignin = async (data: UserSigninInput) => {
 };
 
 export const userSignUp = async (data: UserSignupInput) => {
-  const result = await axiosInstance.post("/user/signup", data);
+  const result = await axiosInstance.post("/api/user/signup", data);
   return result.data;
 };

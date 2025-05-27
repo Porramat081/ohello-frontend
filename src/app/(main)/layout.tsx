@@ -10,10 +10,11 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   const user = useUser();
+
   return (
     <div className="relative min-h-svh md:max-w-[760px] lg:max-w-[1000px] xl:max-w-[1200px] grid grid-cols-1 sm:grid-cols-8 mx-auto">
       <div className="hidden sm:flex justify-start border-r pr-3 px-2 xl:px-0 col-span-2 lg:col-span-1">
-        {user && <MenuUser />}
+        {user && <MenuUser user={user} />}
       </div>
       <div
         className={`${

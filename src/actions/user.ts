@@ -1,13 +1,11 @@
 import { userSignin, userSignUp, UserSignupInput } from "@/apis/user";
+import {
+  ErrorResponseType,
+  genErrorResponse,
+  ErrorResponse,
+} from "@/lib/utils";
 import { signInSchema, signUpSchema } from "@/schemas/schemaForm";
 import { InitialFormState } from "@/types/action";
-
-interface ErrorResponse {
-  email: string;
-  password: string;
-  firstName: string;
-  surName: string;
-}
 
 export const createUser = async (
   _prevState: InitialFormState,
@@ -34,20 +32,20 @@ export const createUser = async (
 
     const result = await userSignUp(data);
 
-    return result && result.message
-      ? {
+    return result.success
+      ? { success: true, message: result.message }
+      : {
           success: false,
           message: result.message,
           errors: result.error,
-        }
-      : { success: true, message: "Register Success" };
-  } catch (error: { message: string } | unknown) {
+        };
+  } catch (error: ErrorResponseType | unknown) {
     return {
       success: false,
-      message:
-        (error as { message: string }).message ||
-        "There's an error in user sign-up process.",
-      errors: (error as { response: { data: ErrorResponse } }).response.data,
+      message: genErrorResponse(error as ErrorResponseType, "user sign-up"),
+      errors:
+        (error as { response: { data: ErrorResponse } }).response?.data || "",
+      value: rawData,
     };
   }
 };
