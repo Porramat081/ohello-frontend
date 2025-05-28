@@ -38,6 +38,7 @@ export const createUser = async (
           success: false,
           message: result.message,
           errors: result.error,
+          value: rawData,
         };
   } catch (error: ErrorResponseType | unknown) {
     return {
@@ -66,28 +67,29 @@ export const signinUserAction = async (
         success: false,
         message: "Please enter valid email and password",
         errors: error.flatten().fieldErrors,
+        value: rawData,
       };
     }
     const result = await userSignin(data);
 
-    return result && result.message
+    return result.success
       ? {
+          success: true,
+          message: "Login Success",
+        }
+      : {
           success: false,
           message: result.message,
           errors: result.error,
-        }
-      : {
-          success: true,
-          message: "Login Success",
+          value: rawData,
         };
-  } catch (error) {
+  } catch (error: ErrorResponseType | unknown) {
     return {
       success: false,
-      message: error || "There's an error in user sign-in process.",
-      errors: {
-        email: [error],
-        password: [error],
-      },
+      message: genErrorResponse(error as ErrorResponseType, "user sign-in"),
+      errors:
+        (error as { response: { data: ErrorResponse } }).response?.data || "",
+      value: rawData,
     };
   }
 };

@@ -13,7 +13,7 @@ import ErrorMessage from "./ErrorMessage";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { formAction, isPending, errors, clearErrors } = useForm(
+  const { state, formAction, isPending, errors, clearErrors } = useForm(
     signinUserAction,
     "/"
   );
@@ -30,6 +30,7 @@ export default function SignInForm() {
           </Label>
           <Input
             required
+            defaultValue={state.value?.email}
             name="email-username"
             id="email-username"
             placeholder="email or username"
@@ -52,9 +53,10 @@ export default function SignInForm() {
             <Input
               required
               type={showPassword ? "text" : "password"}
+              defaultValue={state.value?.password}
               name="login-password"
               id="login-password"
-              className={`bg-foreground/10 ${
+              className={`bg-foreground/10 pr-8 overflow-y-auto ${
                 errors["password"] && "border border-red-500"
               }`}
             ></Input>

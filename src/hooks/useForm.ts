@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation";
 import { useActionState, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ActionType, initialFormState } from "../types/action";
+import { errorAxios } from "@/lib/errorHandle";
 
 export const useForm = (action: ActionType, route?: string) => {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -20,7 +21,8 @@ export const useForm = (action: ActionType, route?: string) => {
         toast.success(state.message);
         if (route) router.push(route);
       } else {
-        toast.error(state.message);
+        //toast.error(state.message);
+        errorAxios(state.errors);
       }
     }
   }, [state, route, router]);

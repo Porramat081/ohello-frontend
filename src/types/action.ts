@@ -1,7 +1,7 @@
 export interface InitialFormState {
   success: boolean;
   message: string;
-  errors?: Record<string, string[]>;
+  errors?: Record<string, string[]> | {};
   value?: any;
 }
 

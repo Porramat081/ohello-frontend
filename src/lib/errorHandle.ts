@@ -12,9 +12,15 @@ export const errorAxios = (error: AxiosError | unknown) => {
         "Invalid request. Please check your connection and try again."
       );
     } else {
-      console.log("Error other axios");
       toast.error("Something went wrong. Please try again later.");
     }
+  } else if (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "NOT_FOUND"
+  ) {
+    toast.error("Request is not correct , Please check again later");
   } else {
     toast.error("Unexpected error");
   }

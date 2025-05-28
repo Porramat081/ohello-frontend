@@ -26,8 +26,8 @@ export default function VerifyPage() {
   };
 
   return (
-    <div className="min-h-svh flex items-center justify-center bg-gray-500">
-      <div className="p-6 bg-background shadow-md rounded-xl text-center space-y-4">
+    <div className="min-h-svh flex items-center justify-center bg-gray-200 dark:bg-gray-500">
+      <div className="mt-[-10rem] p-6 bg-background min-w-[300px] w-[60%] max-w-[900px] shadow-md rounded-xl text-center space-y-4">
         <h1 className="text-xl font-semibold text-foreground">
           Verify Your Account
         </h1>
@@ -48,12 +48,20 @@ export default function VerifyPage() {
             />
           ))}
         </div>
-        <Button
-          onClick={handleSubmit}
-          className="mt-4 px-4 py-2 bg-primary text-white rounded cursor-pointer"
-        >
-          Verify
-        </Button>
+        <div className="flex flex-col-reverse gap-4 items-center">
+          <span
+            onClick={() => alert("Resend Code")}
+            className="text-sm hover:underline hover:text-primary text-muted-foreground cursor-pointer"
+          >
+            Resend Code
+          </span>
+          <Button
+            onClick={handleSubmit}
+            className="text-md mt-4 px-4 py-2 bg-primary text-white rounded cursor-pointer"
+          >
+            Verify
+          </Button>
+        </div>
       </div>
     </div>
   );

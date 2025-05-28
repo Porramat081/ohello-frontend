@@ -25,7 +25,7 @@ export const getMe = async () => {
 };
 
 export const userSignin = async (data: UserSigninInput) => {
-  const result = await axiosInstance.post("/user/signin", data);
+  const result = await axiosInstance.post("/api/user/signin", data);
   return result.data;
 };
 
