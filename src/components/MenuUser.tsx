@@ -5,7 +5,6 @@ import {
   Home,
   MessageCircle,
   Plus,
-  User,
   UserRoundCog,
   Users,
 } from "lucide-react";

@@ -4,11 +4,13 @@ interface VerifyCountDownInterface {
   timeStr: string;
 }
 
+const mockTime = new Date().getTime();
+
 export default function VerifyCountDown({ timeStr }: VerifyCountDownInterface) {
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
-    const startTime = new Date(timeStr).getTime();
+    const startTime = new Date(mockTime).getTime();
     const endTime = startTime + 10 * 60 * 1000;
 
     const updateCountDown = () => {
@@ -24,7 +26,7 @@ export default function VerifyCountDown({ timeStr }: VerifyCountDownInterface) {
   }, [timeStr]);
 
   const min = Math.floor(timeLeft / (1000 * 60));
-  const sec = Math.floor(timeLeft % (1000 * 60)) / 1000;
+  const sec = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
   const formattedTime = `${min.toString().padStart(2, "0")} : ${sec
     .toString()

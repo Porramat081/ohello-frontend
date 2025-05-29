@@ -5,11 +5,16 @@ import { Button } from "@/components/Button";
 import VerifyCountDown from "@/components/VerifyCountdown";
 import { useAuthorize } from "@/hooks/useForm";
 import { errorAxios } from "@/lib/errorHandle";
+import { useLoading } from "@/providers/LoaderProvider";
+import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function VerifyPage() {
   const [code, setCode] = useState(Array(6).fill(""));
   const [startTime, setStartTime] = useState("");
+  const router = useRouter();
+  const loadingProvider = useLoading();
 
   const { existVerify } = useAuthorize();
 
@@ -30,6 +35,11 @@ export default function VerifyPage() {
       return alert("Please enter all 6 digits.");
     console.log("Submitting:", verificationCode);
     // You can fetch POST here to your API
+  };
+
+  const handleClickX = () => {
+    loadingProvider?.setLoading(true);
+    router.replace("/");
   };
 
   const fetchVerifyObj = async () => {
@@ -54,7 +64,14 @@ export default function VerifyPage() {
 
   return (
     <div className="min-h-svh flex items-center justify-center bg-gray-200 dark:bg-gray-500">
-      <div className="mt-[-10rem] p-6 bg-background min-w-[300px] w-[60%] max-w-[900px] shadow-md rounded-xl text-center space-y-4">
+      <div className="relative mt-[-10rem] p-6 bg-background min-w-[300px] w-[60%] max-w-[900px] shadow-md rounded-xl text-center space-y-4">
+        <button
+          className="cursor-pointer rounded-full bg-red-500 absolute top-0 right-0 z-10 translate-x-[30%] translate-y-[-30%]"
+          onClick={handleClickX}
+          type="button"
+        >
+          <X />
+        </button>
         <h1 className="text-xl font-semibold text-foreground">
           Verify Your Account
         </h1>

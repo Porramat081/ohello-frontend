@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { ActionType, initialFormState } from "../types/action";
 import { errorAxios } from "@/lib/errorHandle";
 import { useUser } from "@/providers/UserProvider";
+import { useLoading } from "@/providers/LoaderProvider";
 
 export const useForm = (action: ActionType, route?: string) => {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -36,6 +37,7 @@ export const useForm = (action: ActionType, route?: string) => {
 export const useAuthorize = () => {
   const user = useUser();
   const router = useRouter();
+  const loadingProvider = useLoading();
 
   const existVerify = () => {
     if (user && user?.status !== "Pending") {
@@ -45,6 +47,7 @@ export const useAuthorize = () => {
   };
 
   const changeRoute = () => {
+    loadingProvider?.setLoading(true);
     if (!user) {
       toast.error("Unauthorized , Please login first");
       router.push("/auth/sigin");

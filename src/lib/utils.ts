@@ -38,3 +38,34 @@ export function genErrorResponse(
 export function genAbbration(firstname: string, surname: string) {
   return firstname[0].toUpperCase() + surname[0].toUpperCase();
 }
+
+// utils/route-change-listener.ts
+export function listenToRouteChanges(callback: (status: boolean) => void) {
+  const pushState = history.pushState;
+  const replaceState = history.replaceState;
+
+  // Patch pushState
+  history.pushState = function (...args) {
+    const result = pushState.apply(this, args);
+    callback(true);
+    return result;
+  };
+
+  // Patch replaceState
+  history.replaceState = function (...args) {
+    const result = replaceState.apply(this, args);
+    callback(true);
+    return result;
+  };
+
+  // Listen to back/forward
+  window.addEventListener("popstate", () => {
+    callback(true);
+  });
+
+  if (document.readyState === "complete") {
+    callback(false);
+  } else {
+    window.addEventListener("load", () => callback(false));
+  }
+}
