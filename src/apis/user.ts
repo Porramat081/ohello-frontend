@@ -33,3 +33,8 @@ export const userSignUp = async (data: UserSignupInput) => {
   const result = await axiosInstance.post("/api/user/signup", data);
   return result.data;
 };
+
+export const userGetTimeVerify = async () => {
+  const result = await axiosInstance.get("/api/user/getTimeVerify");
+  return result.data;
+};

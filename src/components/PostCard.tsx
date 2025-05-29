@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { Separator } from "./Separator";
 import Modal from "./Modal";
 import CommentCard from "./CommentCard";
-import { redirect } from "next/navigation";
+import { useAuthorize } from "@/hooks/useForm";
 
 interface PostCardProps {
   item: PostType;
@@ -30,12 +30,12 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
 
+  const { changeRoute } = useAuthorize();
+
   const [isOpenComment, setIsOpenComment] = useState(false);
 
   const handleLike = () => {
-    if (isGuest) {
-      redirect("/auth/signin");
-    }
+    changeRoute();
   };
 
   useEffect(() => {

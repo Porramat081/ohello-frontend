@@ -1,10 +1,17 @@
 "use client";
 
+import { userGetTimeVerify } from "@/apis/user";
 import { Button } from "@/components/Button";
-import { useState } from "react";
+import VerifyCountDown from "@/components/VerifyCountdown";
+import { useAuthorize } from "@/hooks/useForm";
+import { errorAxios } from "@/lib/errorHandle";
+import { useEffect, useState } from "react";
 
 export default function VerifyPage() {
   const [code, setCode] = useState(Array(6).fill(""));
+  const [startTime, setStartTime] = useState("");
+
+  const { existVerify } = useAuthorize();
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d?$/.test(value)) return;
@@ -24,6 +31,26 @@ export default function VerifyPage() {
     console.log("Submitting:", verificationCode);
     // You can fetch POST here to your API
   };
+
+  const fetchVerifyObj = async () => {
+    existVerify();
+    try {
+      const result = await userGetTimeVerify();
+      if (!result.hasVerifyCode) {
+        console.log("send new varify code");
+      } else if (result.hasVerifyCode && result.isExceedTime) {
+        console.log("send new verify code 2");
+      }
+
+      setStartTime(() => result.updatedAt.toString());
+    } catch (error) {
+      errorAxios(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchVerifyObj();
+  }, []);
 
   return (
     <div className="min-h-svh flex items-center justify-center bg-gray-200 dark:bg-gray-500">
@@ -49,12 +76,16 @@ export default function VerifyPage() {
           ))}
         </div>
         <div className="flex flex-col-reverse gap-4 items-center">
-          <span
-            onClick={() => alert("Resend Code")}
-            className="text-sm hover:underline hover:text-primary text-muted-foreground cursor-pointer"
-          >
-            Resend Code
-          </span>
+          <div className="flex items-center justify-between gap-10 mt-3">
+            <span
+              onClick={() => alert("Resend Code")}
+              className="text-sm hover:underline hover:text-primary text-muted-foreground cursor-pointer"
+            >
+              Resend Code
+            </span>
+
+            <VerifyCountDown timeStr={startTime} />
+          </div>
           <Button
             onClick={handleSubmit}
             className="text-md mt-4 px-4 py-2 bg-primary text-white rounded cursor-pointer"
