@@ -11,6 +11,13 @@ export type CommentType = {
   updatedAt: Date;
 };
 
+export type PostImage = {
+  id: string;
+  url: string;
+  fileId: string;
+  order: number;
+};
+
 export type PostType = {
   id: string;
   authorName: string;
@@ -22,4 +29,5 @@ export type PostType = {
   updatedAt: Date;
   comments?: CommentType[];
   likes?: number;
+  images?: PostImage[];
 };

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("ohello-token");
+  const token = request.cookies.get("ckTkOhello");
   const protectedPaths = ["/dashboard", "/settings", "/profile"];
   const isProtected = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)

@@ -1,11 +1,24 @@
+"use client";
+
+import { useUser } from "@/providers/UserProvider";
 import Image from "next/image";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { user } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.replace("/");
+    }
+  }, [user]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 mx-auto min-h-[600px] rounded-xl overflow-hidden border-2 mt-8 max-w-3xl">
       <div className="col-span-1 bg-secondary flex flex-col justify-center items-center text-center p-10">

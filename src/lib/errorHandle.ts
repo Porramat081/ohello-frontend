@@ -22,6 +22,7 @@ export const errorAxios = (error: AxiosError | unknown) => {
   ) {
     toast.error("Request is not correct , Please check again later");
   } else {
+    console.error(error);
     toast.error("Unexpected error");
   }
 };

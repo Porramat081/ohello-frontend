@@ -10,22 +10,32 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useLoading } from "./LoaderProvider";
 
-const UserContext = createContext<UserType | null>(null);
+const UserContext = createContext<any>(null);
+
+interface FetchUserType {
+  fetchUser: () => Promise<void>;
+}
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
+  const loader = useLoading();
 
   const fetchUser = async () => {
     try {
+      loader?.setLoading(true);
       const res = await getMe();
       if (res.data?.success) {
         setUser(res.data?.user);
         return;
       }
+      console.log("user fetch");
       setUser(null);
     } catch (error) {
       errorAxios(error);
+    } finally {
+      loader?.setLoading(false);
     }
   };
 
@@ -33,7 +43,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     fetchUser();
   }, []);
 
-  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ user, fetchUser }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = () => useContext(UserContext);

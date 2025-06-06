@@ -16,6 +16,8 @@ import PostModal from "./PostModal";
 import { useState } from "react";
 import { UserType } from "@/types/user";
 import { genAbbration } from "@/lib/utils";
+import { useAuthorize } from "@/hooks/useForm";
+import { useRouter } from "next/navigation";
 
 interface MenuUserProps {
   user: UserType;
@@ -23,14 +25,15 @@ interface MenuUserProps {
 
 export default function MenuUser({ user }: MenuUserProps) {
   const [openModal, setOpenModal] = useState(false);
+  const { changeRoute } = useAuthorize();
 
   return (
     <div className="flex items-start flex-col gap-5">
       <div className="pt-2 px-2 mb-3">
         <Avatar className="border border-foreground size-13">
-          <AvatarImage src={user.profilePicUrl} />
+          <AvatarImage src={user?.profilePicUrl} />
           <AvatarFallback className="text-2xl font-semibold">
-            {genAbbration(user.firstName, user.surname)}
+            {genAbbration(user?.firstName, user?.surname)}
           </AvatarFallback>
         </Avatar>
       </div>
@@ -40,7 +43,12 @@ export default function MenuUser({ user }: MenuUserProps) {
       <MenuUserButton icon={History} title="History" href="/history" />
       <MenuUserButton icon={UserRoundCog} title="My Profile" href="/profile" />
       <Button
-        onClick={() => setOpenModal(true)}
+        onClick={() => {
+          const isAuthorize = changeRoute();
+          if (isAuthorize) {
+            setOpenModal(true);
+          }
+        }}
         className="mt-4 cursor-pointer flex justify-center items-center text-xs dark:text-white"
       >
         <Plus />
@@ -52,7 +60,7 @@ export default function MenuUser({ user }: MenuUserProps) {
         isOpen={openModal}
         onOpenChange={setOpenModal}
       >
-        <PostModal />
+        <PostModal closeModal={() => setOpenModal(false)} />
       </Modal>
     </div>
   );

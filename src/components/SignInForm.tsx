@@ -10,9 +10,11 @@ import Link from "next/link";
 import { useForm } from "@/hooks/useForm";
 import { signinUserAction } from "@/actions/user";
 import ErrorMessage from "./ErrorMessage";
+import { useUser } from "@/providers/UserProvider";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const { fetchUser } = useUser();
   const { state, formAction, isPending, errors, clearErrors } = useForm(
     signinUserAction,
     "/"

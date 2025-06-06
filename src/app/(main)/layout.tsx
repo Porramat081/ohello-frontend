@@ -3,13 +3,23 @@
 import MenuUser from "@/components/MenuUser";
 import NotifyBox from "@/components/notifyBox";
 import { useUser } from "@/providers/UserProvider";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = useUser();
+  const { user, fetchUser } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      fetchUser();
+      router.replace("/");
+    }
+  }, [user]);
 
   return (
     <div className="relative min-h-svh md:max-w-[760px] lg:max-w-[1000px] xl:max-w-[1200px] grid grid-cols-1 sm:grid-cols-8 mx-auto">

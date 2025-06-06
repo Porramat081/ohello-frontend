@@ -1,4 +1,4 @@
-import { userSignin, userSignUp, UserSignupInput } from "@/apis/user";
+import { userSignin, userSignUp } from "@/apis/user";
 import {
   ErrorResponseType,
   genErrorResponse,

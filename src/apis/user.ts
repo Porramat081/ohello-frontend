@@ -34,6 +34,11 @@ export const userSignUp = async (data: UserSignupInput) => {
   return result.data;
 };
 
+export const userSignOut = async () => {
+  const result = await axiosInstance.get("/api/user/signout");
+  return result.data;
+};
+
 export const userGetTimeVerify = async () => {
   const result = await axiosInstance.get("/api/user/getTimeVerify");
   return result.data;

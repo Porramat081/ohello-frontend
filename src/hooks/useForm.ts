@@ -1,4 +1,4 @@
-import { useRouter } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 import { useActionState, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ActionType, initialFormState } from "../types/action";
@@ -21,9 +21,10 @@ export const useForm = (action: ActionType, route?: string) => {
     if (state.message) {
       if (state.success) {
         toast.success(state.message);
-        if (route) router.push(route);
+        if (route) {
+          router.push(route);
+        }
       } else {
-        //toast.error(state.message);
         errorAxios(state.errors);
       }
     }
@@ -35,7 +36,7 @@ export const useForm = (action: ActionType, route?: string) => {
 };
 
 export const useAuthorize = () => {
-  const user = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const loadingProvider = useLoading();
 
@@ -65,6 +66,8 @@ export const useAuthorize = () => {
         return;
       }
     }
+    loadingProvider?.setLoading(false);
+    return true;
   };
 
   return { changeRoute, existVerify };

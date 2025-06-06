@@ -127,7 +127,7 @@ const mockPost = [
 
 export default function Mainboard() {
   const [openStory, setOpenStory] = useState(false);
-  const user = useUser();
+  const { user } = useUser();
   return (
     <div>
       <h2 className="text-primary font-extrabold pl-3 pt-1">Home</h2>
