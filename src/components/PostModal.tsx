@@ -15,11 +15,13 @@ import WaitingBox from "./WaitBox";
 interface PostModalProps {
   closeModal: () => void;
   existingPost?: PostType | null;
+  fetchNewPost: () => void;
 }
 
 export default function PostModal({
   closeModal,
   existingPost,
+  fetchNewPost,
 }: PostModalProps) {
   const [postImages, setPostImages] = useState<File[]>([]);
   const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
@@ -40,6 +42,7 @@ export default function PostModal({
 
   useEffect(() => {
     if (state.success) {
+      fetchNewPost();
       closeModal();
     }
   }, [state]);

@@ -18,6 +18,7 @@ import { UserType } from "@/types/user";
 import { genAbbration } from "@/lib/utils";
 import { useAuthorize } from "@/hooks/useForm";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/providers/UserProvider";
 
 interface MenuUserProps {
   user: UserType;
@@ -26,6 +27,8 @@ interface MenuUserProps {
 export default function MenuUser({ user }: MenuUserProps) {
   const [openModal, setOpenModal] = useState(false);
   const { changeRoute } = useAuthorize();
+
+  const { setActivePost } = useUser();
 
   return (
     <div className="flex items-start flex-col gap-5">
@@ -46,7 +49,7 @@ export default function MenuUser({ user }: MenuUserProps) {
         onClick={() => {
           const isAuthorize = changeRoute();
           if (isAuthorize) {
-            setOpenModal(true);
+            setActivePost(true);
           }
         }}
         className="mt-4 cursor-pointer flex justify-center items-center text-xs dark:text-white"
@@ -54,14 +57,6 @@ export default function MenuUser({ user }: MenuUserProps) {
         <Plus />
         New Post
       </Button>
-
-      <Modal
-        title="Post Something"
-        isOpen={openModal}
-        onOpenChange={setOpenModal}
-      >
-        <PostModal closeModal={() => setOpenModal(false)} />
-      </Modal>
     </div>
   );
 }

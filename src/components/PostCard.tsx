@@ -30,12 +30,22 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
 
+  const [imageLoading, setImageLoading] = useState(false);
+
   const { changeRoute } = useAuthorize();
 
   const [isOpenComment, setIsOpenComment] = useState(false);
 
   const handleLike = () => {
     changeRoute();
+  };
+
+  const startImageLoading = () => {
+    setImageLoading(true);
+  };
+
+  const stopImageLoading = () => {
+    setImageLoading(false);
   };
 
   useEffect(() => {
@@ -87,18 +97,24 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
       <div className="py-2 px-3 text-[1.2rem] wrap-break-word text-justify">
         {item.content}
       </div>
-      {item.picUrls && item.picUrls.length > 0 && (
+      {item.images && item.images.length > 0 && (
         <Carousel setApi={setApi}>
           <CarouselContent>
-            {item.picUrls.map((item, index) => (
+            {item.images?.map((item, index) => (
               <CarouselItem key={index}>
                 <div className="relative w-full aspect-video">
-                  <Image
-                    className="object-contain"
-                    src={item}
-                    alt="post-image"
-                    fill
-                  />
+                  {imageLoading ? (
+                    <>Loading image ...</>
+                  ) : (
+                    <Image
+                      onLoadStart={startImageLoading}
+                      onLoadingComplete={stopImageLoading}
+                      className="object-contain"
+                      src={item.url}
+                      alt="post-image"
+                      fill
+                    />
+                  )}
                 </div>
               </CarouselItem>
             ))}
@@ -117,7 +133,9 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
               variant={"ghost"}
               className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer"
             >
-              <Heart className="fill-primary text-primary" />
+              <Heart
+                className={`text-primary ${!!item.likes && "fill-primary"}`}
+              />
               <span className="text-xs">{item.likes || 0}</span>
             </Button>
             <Button

@@ -6,10 +6,14 @@ import { Carousel, CarouselContent, CarouselItem } from "./CardCarousel";
 import { Separator } from "./Separator";
 import StoryCard from "./StoryCard";
 import PostCard from "./PostCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import StoryModal from "./StoryModal";
 import { useUser } from "@/providers/UserProvider";
+import { errorAxios } from "@/lib/errorHandle";
+import { getFeedPost } from "@/apis/post";
+import { useLoading } from "@/providers/LoaderProvider";
+import PostModal from "./PostModal";
 
 const mockStory = [
   {
@@ -127,7 +131,29 @@ const mockPost = [
 
 export default function Mainboard() {
   const [openStory, setOpenStory] = useState(false);
-  const { user } = useUser();
+  const { user, activePost, setActivePost } = useUser();
+  const loader = useLoading();
+
+  const [feedPosts, setFeedPosts] = useState<any[]>([]);
+
+  const fetchFeedPosts = async () => {
+    try {
+      loader?.setLoading(true);
+      const res = await getFeedPost();
+      if (res.success && res.posts?.length > 0) {
+        setFeedPosts(() => [...res.posts]);
+      }
+    } catch (error) {
+      errorAxios(error);
+    } finally {
+      loader?.setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeedPosts();
+  }, [user]);
+
   return (
     <div>
       <h2 className="text-primary font-extrabold pl-3 pt-1">Home</h2>
@@ -166,7 +192,7 @@ export default function Mainboard() {
         <Separator />
 
         <div className="flex flex-col gap-2">
-          {mockPost.map((item, index) => (
+          {feedPosts.map((item, index) => (
             <PostCard key={index} item={item} isGuest={!user} />
           ))}
         </div>
@@ -179,6 +205,17 @@ export default function Mainboard() {
         onOpenChange={setOpenStory}
       >
         <StoryModal />
+      </Modal>
+
+      <Modal
+        title="Post Something"
+        isOpen={activePost}
+        onOpenChange={setActivePost}
+      >
+        <PostModal
+          fetchNewPost={fetchFeedPosts}
+          closeModal={() => setActivePost(false)}
+        />
       </Modal>
     </div>
   );

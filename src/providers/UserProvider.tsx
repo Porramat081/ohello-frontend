@@ -20,6 +20,8 @@ interface FetchUserType {
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
+  const [activePost, setActivePost] = useState(false);
+
   const loader = useLoading();
 
   const fetchUser = async () => {
@@ -44,7 +46,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, fetchUser }}>
+    <UserContext.Provider
+      value={{ user, fetchUser, activePost, setActivePost }}
+    >
       {children}
     </UserContext.Provider>
   );

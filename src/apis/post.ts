@@ -11,6 +11,6 @@ export const createNewPost = async (postObj: PostObjInput) => {
 };
 
 export const getFeedPost = async () => {
-  const result = await axiosInstance.get("/api/post");
+  const result = await axiosInstance.get("/api/post/getFeedPosts");
   return result.data;
 };
