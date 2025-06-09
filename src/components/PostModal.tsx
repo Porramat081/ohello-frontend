@@ -1,10 +1,7 @@
-import { Eraser, Save, Upload } from "lucide-react";
+import { Eraser, Save } from "lucide-react";
 import { Button } from "./Button";
 import { Textarea } from "./Textarea";
 import { useEffect, useState } from "react";
-import { errorAxios } from "@/lib/errorHandle";
-import { createNewPost } from "@/apis/post";
-import { toast } from "sonner";
 import Form from "next/form";
 import PostImageButton from "./PostImageButton";
 import { PostType } from "@/types/post";
@@ -46,6 +43,15 @@ export default function PostModal({
       closeModal();
     }
   }, [state]);
+
+  useEffect(() => {
+    if (existingPost) {
+      const existContent = document.getElementById("content");
+      if (existContent) {
+        (existContent as HTMLTextAreaElement).value = existingPost.content;
+      }
+    }
+  }, [existingPost]);
 
   const handleImageChange = (images: File[], deletedIds: string[] = []) => {
     setPostImages(images);

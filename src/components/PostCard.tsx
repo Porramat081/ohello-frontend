@@ -1,12 +1,7 @@
 import { PostType } from "@/types/post";
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
 import { Button } from "./Button";
-import {
-  Bookmark,
-  CircleEllipsis,
-  Heart,
-  MessageSquareText,
-} from "lucide-react";
+import { Bookmark, Heart, MessageSquareText } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -19,6 +14,8 @@ import { Separator } from "./Separator";
 import Modal from "./Modal";
 import CommentCard from "./CommentCard";
 import { useAuthorize } from "@/hooks/useForm";
+import DropdownPostcard from "./DropDownPostCard";
+import { useUser } from "@/providers/UserProvider";
 
 interface PostCardProps {
   item: PostType;
@@ -29,6 +26,8 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+
+  const { setActivePost } = useUser();
 
   const [imageLoading, setImageLoading] = useState(false);
 
@@ -46,6 +45,14 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
 
   const stopImageLoading = () => {
     setImageLoading(false);
+  };
+
+  const handleEdit = () => {
+    setActivePost(item);
+  };
+
+  const handleDelete = () => {
+    console.log("Delete");
   };
 
   useEffect(() => {
@@ -84,12 +91,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
           </span>
 
           {!isGuest && (
-            <Button
-              variant={"ghost"}
-              className="p-0 cursor-pointer h-auto hover:bg-transparent"
-            >
-              <CircleEllipsis />
-            </Button>
+            <DropdownPostcard onEdit={handleEdit} onDelete={handleDelete} />
           )}
         </div>
       </div>

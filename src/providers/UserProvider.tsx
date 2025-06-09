@@ -11,16 +11,15 @@ import {
   useState,
 } from "react";
 import { useLoading } from "./LoaderProvider";
+import { PostType } from "@/types/post";
 
 const UserContext = createContext<any>(null);
 
-interface FetchUserType {
-  fetchUser: () => Promise<void>;
-}
+type ActivePostType = true | false | PostType;
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
-  const [activePost, setActivePost] = useState(false);
+  const [activePost, setActivePost] = useState<ActivePostType>(false);
 
   const loader = useLoading();
 
