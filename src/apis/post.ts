@@ -1,8 +1,10 @@
 import axiosInstance, { axiosInstance2 } from "@/lib/axios";
+// import { PostImage } from "@/types/post";
 
 interface PostObjInput {
   content: string;
   images: File[];
+  deletedImageIds?: string;
 }
 
 export const createNewPost = async (postObj: PostObjInput) => {
@@ -15,7 +17,10 @@ export const getFeedPost = async () => {
   return result.data;
 };
 
-export const editPost = async () => {
-  const result = await axiosInstance.patch("/api/post/editPost");
+export const editPost = async (postId: string, data: PostObjInput) => {
+  const result = await axiosInstance2.patch(
+    "/api/post/editPost/" + postId,
+    data
+  );
   return result.data;
 };

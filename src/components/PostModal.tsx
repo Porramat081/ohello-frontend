@@ -1,4 +1,4 @@
-import { Eraser, Save } from "lucide-react";
+import { Edit2, Eraser, Save } from "lucide-react";
 import { Button } from "./Button";
 import { Textarea } from "./Textarea";
 import { useEffect, useState } from "react";
@@ -26,15 +26,22 @@ export default function PostModal({
 
   const [postStatus, setPostStatus] = useState<PostStatus>("Public");
 
-  const { errors, formAction, state, isPending, clearErrors } =
-    useForm(createNewPostAction);
+  const { formAction, state, isPending } = useForm(createNewPostAction);
 
   const handleSubmitPost = (formData: FormData) => {
+    if (existingPost?.id) {
+      formData.append("id", existingPost?.id);
+    }
     if (postImages.length > 0) {
       postImages.forEach((file) => {
         formData.append("images", file);
       });
     }
+
+    if (deletedImageIds.length > 0) {
+      formData.append("deleted-image-ids", JSON.stringify(deletedImageIds));
+    }
+
     const result = formAction(formData);
 
     return result;
@@ -82,8 +89,17 @@ export default function PostModal({
       />
       <div className="flex justify-center gap-2">
         <Button type="submit" className="flex-1 cursor-pointer">
-          <Save />
-          submit
+          {existingPost?.id ? (
+            <>
+              <Edit2 />
+              save change
+            </>
+          ) : (
+            <>
+              <Save />
+              submit
+            </>
+          )}
         </Button>
         <Button
           variant={"outline"}

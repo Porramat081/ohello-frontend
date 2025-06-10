@@ -1,4 +1,4 @@
-import { createNewPost } from "@/apis/post";
+import { createNewPost, editPost } from "@/apis/post";
 import {
   ErrorResponse,
   ErrorResponseType,
@@ -10,10 +10,18 @@ export const createNewPostAction = async (
   _prevState: InitialFormState,
   formData: FormData
 ) => {
+  const postId = formData.get("id") as string;
   const rawData = {
     content: formData.get("content") as string,
     images: formData.getAll("images") as File[],
   };
+
+  const deletedImageIds = formData.get("deleted-image-ids") as string;
+  if (deletedImageIds) {
+    (
+      rawData as { content: string; images: File[]; deletedImageIds: string }
+    ).deletedImageIds = deletedImageIds;
+  }
 
   if (!rawData.content.trim() && rawData.images.length === 0) {
     return {
@@ -27,7 +35,9 @@ export const createNewPostAction = async (
   }
 
   try {
-    const result = await createNewPost(rawData);
+    const result = postId
+      ? await editPost(postId, rawData)
+      : await createNewPost(rawData);
     return result.success
       ? {
           success: true,
