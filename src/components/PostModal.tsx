@@ -8,6 +8,7 @@ import { PostType } from "@/types/post";
 import { useForm } from "@/hooks/useForm";
 import { createNewPostAction } from "@/actions/post";
 import WaitingBox from "./WaitBox";
+import PostStatusTab from "./PostStatusTab";
 
 interface PostModalProps {
   closeModal: () => void;
@@ -45,7 +46,7 @@ export default function PostModal({
   }, [state]);
 
   useEffect(() => {
-    if (existingPost) {
+    if (existingPost?.content) {
       const existContent = document.getElementById("content");
       if (existContent) {
         (existContent as HTMLTextAreaElement).value = existingPost.content;
@@ -72,6 +73,7 @@ export default function PostModal({
         placeholder="Post something ..."
         className="resize-none h-50 p-4 font-[400] text-sm tracking-wide"
       />
+      <PostStatusTab />
       <PostImageButton
         onImageChange={handleImageChange}
         existingImages={existingPost?.images}

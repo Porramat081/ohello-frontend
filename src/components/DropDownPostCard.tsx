@@ -21,7 +21,7 @@ export default function DropdownPostcard({ onEdit, onDelete }: Props) {
   }, []);
 
   return (
-    <div className="p-2 relative inline-block text-left" ref={menuRef}>
+    <div className="p-2 flex flex-center relative text-left" ref={menuRef}>
       <button
         onClick={() => setOpen(!open)}
         className="cursor-pointer hover:text-primary"

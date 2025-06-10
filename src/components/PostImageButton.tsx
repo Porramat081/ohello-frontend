@@ -15,7 +15,9 @@ export default function PostImageButton({
   existingImages = [],
 }: PostImageButtonProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([
+    ...existingImages.map((item) => item.url),
+  ]);
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
   const [existingImageState, setExistingImageState] = useState(existingImages);
   const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);

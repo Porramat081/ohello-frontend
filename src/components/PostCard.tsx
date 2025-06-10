@@ -16,6 +16,7 @@ import CommentCard from "./CommentCard";
 import { useAuthorize } from "@/hooks/useForm";
 import DropdownPostcard from "./DropDownPostCard";
 import { useUser } from "@/providers/UserProvider";
+import { formatDateWithAmPm } from "@/lib/utils";
 
 interface PostCardProps {
   item: PostType;
@@ -53,6 +54,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
 
   const handleDelete = () => {
     console.log("Delete");
+    alert(item.createdAt);
   };
 
   useEffect(() => {
@@ -83,11 +85,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
         </div>
         <div className="flex items-center gap-1">
           <span className="text-xs font-light">
-            {item.createdAt.toLocaleString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            })}
+            {formatDateWithAmPm(item.createdAt, item.updatedAt)}
           </span>
 
           {!isGuest && (
@@ -96,7 +94,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
         </div>
       </div>
       {/* PostCard Content */}
-      <div className="py-2 px-3 text-[1.2rem] wrap-break-word text-justify">
+      <div className="py-2 px-3 text-[1rem] lg:text-[1.2rem] wrap-break-word text-justify">
         {item.content}
       </div>
       {item.images && item.images.length > 0 && (

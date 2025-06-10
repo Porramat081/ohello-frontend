@@ -14,3 +14,8 @@ export const getFeedPost = async () => {
   const result = await axiosInstance.get("/api/post/getFeedPosts");
   return result.data;
 };
+
+export const editPost = async () => {
+  const result = await axiosInstance.patch("/api/post/editPost");
+  return result.data;
+};

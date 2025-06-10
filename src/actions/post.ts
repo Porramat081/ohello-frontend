@@ -49,3 +49,24 @@ export const createNewPostAction = async (
     };
   }
 };
+
+export const editPostAction = async (
+  _prevState: InitialFormState,
+  formData: FormData
+) => {
+  const rawData = {
+    content: formData.get("content") as string,
+    status: formData.get("status") as string,
+    images: formData.getAll("images") as File[],
+  };
+  if (!rawData.content.trim() && rawData.images.length === 0) {
+    return {
+      success: false,
+      message: "Please post some content or upload image",
+      errors: {
+        content: [{ message: "Please post some content" }],
+        images: [{ message: "Or please upload some image" }],
+      },
+    };
+  }
+};
