@@ -4,7 +4,7 @@ import { Textarea } from "./Textarea";
 import { useEffect, useState } from "react";
 import Form from "next/form";
 import PostImageButton from "./PostImageButton";
-import { PostType } from "@/types/post";
+import { PostStatus, PostType } from "@/types/post";
 import { useForm } from "@/hooks/useForm";
 import { createNewPostAction } from "@/actions/post";
 import WaitingBox from "./WaitBox";
@@ -23,6 +23,8 @@ export default function PostModal({
 }: PostModalProps) {
   const [postImages, setPostImages] = useState<File[]>([]);
   const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
+
+  const [postStatus, setPostStatus] = useState<PostStatus>("Public");
 
   const { errors, formAction, state, isPending, clearErrors } =
     useForm(createNewPostAction);
@@ -43,7 +45,7 @@ export default function PostModal({
       fetchNewPost();
       closeModal();
     }
-  }, [state]);
+  }, [closeModal, fetchNewPost, state]);
 
   useEffect(() => {
     if (existingPost?.content) {
@@ -73,7 +75,7 @@ export default function PostModal({
         placeholder="Post something ..."
         className="resize-none h-50 p-4 font-[400] text-sm tracking-wide"
       />
-      <PostStatusTab />
+      <PostStatusTab value={postStatus} setValue={setPostStatus} />
       <PostImageButton
         onImageChange={handleImageChange}
         existingImages={existingPost?.images}
@@ -86,8 +88,7 @@ export default function PostModal({
         <Button
           variant={"outline"}
           className="flex-1 cursor-pointer"
-          type="reset"
-        >
+          type="reset">
           <Eraser />
           clear
         </Button>

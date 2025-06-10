@@ -31,3 +31,5 @@ export type PostType = {
   likes?: number;
   images?: PostImage[];
 };
+
+export type PostStatus = "Private" | "Public" | "Draft" | "FriendOnly";

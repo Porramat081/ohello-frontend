@@ -102,7 +102,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
           <CarouselContent>
             {item.images?.map((item, index) => (
               <CarouselItem key={index}>
-                <div className="relative w-full aspect-video">
+                <div className="relative w-[300px] lg:w-[500px] h-auto aspect-video mx-auto border-1 rounded-lg">
                   {imageLoading ? (
                     <>Loading image ...</>
                   ) : (
@@ -131,8 +131,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
             <Button
               onClick={handleLike}
               variant={"ghost"}
-              className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer"
-            >
+              className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer">
               <Heart
                 className={`text-primary ${!!item.likes && "fill-primary"}`}
               />
@@ -141,8 +140,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
             <Button
               onClick={() => setIsOpenComment(true)}
               variant={"ghost"}
-              className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer"
-            >
+              className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer">
               <MessageSquareText />
               <span className="text-xs">
                 {item.comments ? item.comments.length : 0}
@@ -152,8 +150,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
 
           <Button
             variant={"ghost"}
-            className="p-0 h-auto hover:bg-transparent hover:cursor-pointer"
-          >
+            className="p-0 h-auto hover:bg-transparent hover:cursor-pointer">
             <Bookmark />
           </Button>
         </div>
@@ -163,8 +160,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
       <Modal
         title="comment sectoion"
         isOpen={isOpenComment}
-        onOpenChange={setIsOpenComment}
-      >
+        onOpenChange={setIsOpenComment}>
         <CommentCard item={item} onClose={setIsOpenComment} isGuest={isGuest} />
       </Modal>
     </div>
