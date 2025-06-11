@@ -4,13 +4,11 @@ interface VerifyCountDownInterface {
   timeStr: string;
 }
 
-const mockTime = new Date().getTime();
-
 export default function VerifyCountDown({ timeStr }: VerifyCountDownInterface) {
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
-    const startTime = new Date(mockTime).getTime();
+    const startTime = new Date(timeStr).getTime();
     const endTime = startTime + 10 * 60 * 1000;
 
     const updateCountDown = () => {

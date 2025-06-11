@@ -77,7 +77,7 @@ export default function Mainboard() {
     <div>
       <h2 className="text-primary font-extrabold pl-3 pt-1">Home</h2>
       {/* Story Tab */}
-      {user && (
+      {user && user.status === "Active" && (
         <Carousel className="flex items-center" opts={{ align: "center" }}>
           <CarouselItem
             className="basis-auto pr-3"
@@ -112,7 +112,11 @@ export default function Mainboard() {
 
         <div className="flex flex-col gap-2">
           {feedPosts.map((item, index) => (
-            <PostCard key={index} item={item} isGuest={!user} />
+            <PostCard
+              key={index}
+              item={item}
+              isGuest={!user || user.id !== item.authorID}
+            />
           ))}
         </div>
       </div>

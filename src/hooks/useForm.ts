@@ -17,7 +17,11 @@ export const useForm = (action: ActionType, route?: string) => {
 
   useEffect(() => {
     if (!state) return;
-    if (state.errors) setErrors(state.errors);
+    if (state.errors) {
+      setErrors({ ...state.errors });
+      toast.error(state.message);
+      return;
+    }
     if (state.message) {
       if (state.success) {
         toast.success(state.message);
@@ -41,33 +45,38 @@ export const useAuthorize = () => {
   const loadingProvider = useLoading();
 
   const existVerify = () => {
+    console.log("exist activeat");
     if (user && user?.status !== "Pending") {
+      console.log("exist execute");
       router.replace("/");
       return;
     }
   };
 
   const changeRoute = () => {
-    loadingProvider?.setLoading(true);
-    if (!user) {
-      toast.error("Unauthorized , Please login first");
-      router.push("/auth/sigin");
-      return;
-    } else {
-      if (user.status === "Pending") {
-        toast.error("This account isn't verified yet , Please verify");
-        router.push("/verify");
+    try {
+      loadingProvider?.setLoading(true);
+      if (!user) {
+        toast.error("Unauthorized , Please login first");
+        router.push("/auth/sigin");
         return;
-      } else if (user.status !== "Active") {
-        toast.error(
-          "This account has already removed , Please create a new account"
-        );
-        router.replace("/auth/signup");
-        return;
+      } else {
+        if (user.status === "Pending") {
+          toast.error("This account isn't verified yet , Please verify");
+          router.push("/verify");
+          return;
+        } else if (user.status !== "Active") {
+          toast.error(
+            "This account has already removed , Please create a new account"
+          );
+          router.replace("/auth/signup");
+          return;
+        }
       }
+      return true;
+    } finally {
+      loadingProvider?.setLoading(false);
     }
-    loadingProvider?.setLoading(false);
-    return true;
   };
 
   return { changeRoute, existVerify };

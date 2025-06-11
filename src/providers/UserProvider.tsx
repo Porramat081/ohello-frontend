@@ -12,6 +12,7 @@ import {
 } from "react";
 import { useLoading } from "./LoaderProvider";
 import { PostType } from "@/types/post";
+import { useRouter } from "next/navigation";
 
 const UserContext = createContext<any>(null);
 
@@ -21,6 +22,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [activePost, setActivePost] = useState<ActivePostType>(false);
 
+  const router = useRouter();
   const loader = useLoading();
 
   const fetchUser = async () => {
@@ -29,15 +31,24 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const res = await getMe();
       if (res.data?.success) {
         setUser(res.data?.user);
+        if (res.data?.user.status === "Pending") {
+          router.replace("/verify");
+        }
+        return;
+      } else {
+        console.log("user fetch");
+        setUser(null);
         return;
       }
-      console.log("user fetch");
-      setUser(null);
     } catch (error) {
       errorAxios(error);
     } finally {
       loader?.setLoading(false);
     }
+  };
+
+  const clearUser = () => {
+    setUser(null);
   };
 
   useEffect(() => {
@@ -46,7 +57,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, fetchUser, activePost, setActivePost }}
+      value={{ user, clearUser, fetchUser, activePost, setActivePost }}
     >
       {children}
     </UserContext.Provider>

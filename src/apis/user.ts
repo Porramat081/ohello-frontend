@@ -43,3 +43,15 @@ export const userGetTimeVerify = async () => {
   const result = await axiosInstance.get("/api/user/getTimeVerify");
   return result.data;
 };
+
+export const userResendCodeVerify = async () => {
+  const result = await axiosInstance.get("/api/user/resendVerify");
+  return result.data;
+};
+
+export const verifyUser = async (verifyCode: string) => {
+  const result = await axiosInstance.post("/api/user/verifyUser", {
+    verifyCode,
+  });
+  return result.data;
+};

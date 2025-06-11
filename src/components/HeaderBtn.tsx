@@ -5,7 +5,7 @@ import { useLoading } from "@/providers/LoaderProvider";
 import { useUser } from "@/providers/UserProvider";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function HeaderBtn() {
@@ -15,20 +15,22 @@ export default function HeaderBtn() {
     setIsDark((prev) => !prev);
   };
   const router = useRouter();
-  const { user, fetchUser } = useUser();
+  const pathname = usePathname();
+  const { user, clearUser } = useUser();
   const loader = useLoading();
 
   const handleClickUserBtn = async () => {
-    if (!user) {
-      loader?.setLoading(true);
-      router.push("/auth/signin");
-      return;
-    }
     try {
       loader?.setLoading(true);
-      await userSignOut();
-      await fetchUser();
-      return;
+      if (!user) {
+        router.push("/auth/signin");
+        return;
+      } else {
+        await userSignOut();
+        clearUser();
+        router.replace("/auth/signin");
+        return;
+      }
     } finally {
       loader?.setLoading(false);
     }
@@ -56,12 +58,30 @@ export default function HeaderBtn() {
       </button>
 
       {/* Mobile user menu */}
-      <button
-        className="text-white hover:text-muted-foreground hover:underline cursor-pointer"
-        onClick={handleClickUserBtn}
-      >
-        {user ? "sign out" : "sign in"}
-      </button>
+      {pathname === "/auth/signin" ? (
+        <button
+          onClick={() => router.replace("/")}
+          className="text-white hover:text-muted-foreground hover:underline cursor-pointer"
+        >
+          go to page
+        </button>
+      ) : (
+        <button
+          className="text-white hover:text-muted-foreground hover:underline cursor-pointer"
+          onClick={handleClickUserBtn}
+        >
+          {user ? "sign out" : "sign in"}
+        </button>
+      )}
+
+      {user && user.status === "Pending" && (
+        <button
+          onClick={() => router.replace("/verify")}
+          className="text-white hover:text-muted-foreground hover:underline cursor-pointer"
+        >
+          verify
+        </button>
+      )}
     </div>
   );
 }

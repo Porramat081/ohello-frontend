@@ -1,6 +1,10 @@
 "use client";
 
-import { userGetTimeVerify } from "@/apis/user";
+import {
+  userGetTimeVerify,
+  userResendCodeVerify,
+  verifyUser,
+} from "@/apis/user";
 import { Button } from "@/components/Button";
 import VerifyCountDown from "@/components/VerifyCountdown";
 import { useAuthorize } from "@/hooks/useForm";
@@ -9,6 +13,7 @@ import { useLoading } from "@/providers/LoaderProvider";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function VerifyPage() {
   const [code, setCode] = useState(Array(6).fill(""));
@@ -31,10 +36,22 @@ export default function VerifyPage() {
 
   const handleSubmit = async () => {
     const verificationCode = code.join("");
-    if (verificationCode.length !== 6)
-      return alert("Please enter all 6 digits.");
-    console.log("Submitting:", verificationCode);
-    // You can fetch POST here to your API
+    if (verificationCode.length !== 6) {
+      toast.error("Please enter all 6 digits.");
+      return;
+    }
+
+    try {
+      const res = await verifyUser(code.join(""));
+      if (res.success) {
+        toast.success(res.message);
+        router.replace("/");
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      errorAxios(error);
+    }
   };
 
   const handleClickX = () => {
@@ -42,17 +59,31 @@ export default function VerifyPage() {
     router.replace("/");
   };
 
+  const handleResend = async () => {
+    try {
+      loadingProvider?.setLoading(true);
+      const result = await userResendCodeVerify();
+      if (result) {
+        setStartTime(result.updatedAt?.toString());
+      } else {
+        setStartTime("");
+      }
+    } catch (error) {
+      errorAxios(error);
+    } finally {
+      loadingProvider?.setLoading(false);
+    }
+  };
+
   const fetchVerifyObj = async () => {
     existVerify();
     try {
       const result = await userGetTimeVerify();
-      if (!result.hasVerifyCode) {
-        console.log("send new varify code");
-      } else if (result.hasVerifyCode && result.isExceedTime) {
-        console.log("send new verify code 2");
+      if (result.isExceedTime) {
+        setStartTime("");
+      } else {
+        setStartTime(result.updatedAt?.toString() || "");
       }
-
-      setStartTime(() => result.updatedAt.toString());
     } catch (error) {
       errorAxios(error);
     }
@@ -94,12 +125,13 @@ export default function VerifyPage() {
         </div>
         <div className="flex flex-col-reverse gap-4 items-center">
           <div className="flex items-center justify-between gap-10 mt-3">
-            <span
-              onClick={() => alert("Resend Code")}
+            <button
+              type="button"
+              onClick={handleResend}
               className="text-sm hover:underline hover:text-primary text-muted-foreground cursor-pointer"
             >
               Resend Code
-            </span>
+            </button>
 
             <VerifyCountDown timeStr={startTime} />
           </div>
