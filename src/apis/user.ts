@@ -1,5 +1,4 @@
 import axiosInstance from "@/lib/axios";
-import { UserType } from "@/types/user";
 
 interface UserSigninInput {
   email: string;
