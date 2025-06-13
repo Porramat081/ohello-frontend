@@ -5,14 +5,14 @@ interface FriendCategoryProps {
   setCat: (cat: string) => void;
 }
 
-const mockCat = ["Friends", "Close Friends", "Following", "Follwers"];
+const mockCat = ["Suggest Friends", "Your Friends", "Friend Request", "Block"];
 
 export default function FriendCategory(props: FriendCategoryProps) {
   const handleClick = (cat: string) => {
     props.setCat(cat);
   };
   return (
-    <div className="flex justify-between lg:justify-start lg:flex-col">
+    <div className="flex justify-between">
       {mockCat.map((item, index) => (
         <Button
           key={index}
