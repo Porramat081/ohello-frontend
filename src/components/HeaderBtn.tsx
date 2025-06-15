@@ -60,7 +60,10 @@ export default function HeaderBtn() {
       {/* Mobile user menu */}
       {pathname === "/auth/signin" ? (
         <button
-          onClick={() => router.replace("/")}
+          onClick={() => {
+            loader?.setLoading(true);
+            router.replace("/");
+          }}
           className="text-white hover:text-muted-foreground hover:underline cursor-pointer"
         >
           go to page
@@ -76,7 +79,10 @@ export default function HeaderBtn() {
 
       {user && user.status === "Pending" && (
         <button
-          onClick={() => router.replace("/verify")}
+          onClick={() => {
+            loader?.setLoading(true);
+            router.replace("/verify");
+          }}
           className="text-white hover:text-muted-foreground hover:underline cursor-pointer"
         >
           verify

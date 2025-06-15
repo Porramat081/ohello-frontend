@@ -1,6 +1,56 @@
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
+import { Button } from "./Button";
+import { Textarea } from "./Textarea";
+import { Send } from "lucide-react";
 
 export default function MessageBox() {
+  const [message, setMessage] = useState("");
+  const [recievedMessages, setRecievedMessages] = useState<string[]>([]);
+  const socketRef = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    //ws connection
+    socketRef.current = new WebSocket(
+      (process.env.NEXT_PUBLIC_WEB_SOCKET || "") + "/wsMessage"
+    );
+    //ws open
+    socketRef.current.onopen = () => {
+      console.log("ws connection open");
+    };
+    //listen message
+    socketRef.current.onmessage = (event) => {
+      console.log("Message Received : ", event.data);
+      setRecievedMessages((prev) => [...prev, event.data as string]);
+    };
+    //connection closed
+    socketRef.current.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+    //connection error
+    socketRef.current.onerror = (error) => {
+      console.error("WebSocket error : ", error);
+    };
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
+  }, []);
+
+  const handleChangeMessage = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(event.target.value);
+  };
+  const handleSendMessage = () => {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      const data = JSON.stringify({
+        message: message,
+        targetId: 5,
+      });
+      socketRef.current.send(data);
+    }
+    setMessage(() => "");
+  };
   return (
     <div>
       <div className="px-2 flex justify-between items-center">
@@ -48,6 +98,30 @@ export default function MessageBox() {
           <div className="flex justify-between text-[0.6rem] px-3">
             <div>recieved : 10 July 2025</div>
           </div>
+        </div>
+
+        {/* Array receieved */}
+        {recievedMessages.map((item, index) => (
+          <div key={index}>{item}</div>
+        ))}
+
+        {/* Message writer box */}
+        <div className="p-2 flex flex-col items-end gap-2">
+          <Textarea
+            onChange={handleChangeMessage}
+            placeholder="Type your message here."
+            cols={40}
+            value={message}
+            className="resize-none min-h-20"
+          />
+          <Button
+            className="cursor-pointer"
+            type="button"
+            onClick={handleSendMessage}
+          >
+            <Send size={16} />
+            Send
+          </Button>
         </div>
       </div>
     </div>
