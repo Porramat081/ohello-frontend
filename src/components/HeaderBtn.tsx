@@ -1,6 +1,7 @@
 "use client";
 
 import { userSignOut } from "@/apis/user";
+import { errorAxios } from "@/lib/errorHandle";
 import { useLoading } from "@/providers/LoaderProvider";
 import { useUser } from "@/providers/UserProvider";
 import { MoonIcon, SunIcon } from "lucide-react";
@@ -31,6 +32,8 @@ export default function HeaderBtn() {
         router.replace("/auth/signin");
         return;
       }
+    } catch (error) {
+      errorAxios(error);
     } finally {
       loader?.setLoading(false);
     }

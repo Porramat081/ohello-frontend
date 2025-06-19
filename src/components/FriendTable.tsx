@@ -4,9 +4,9 @@ import { Button } from "./Button";
 import { getFriends } from "@/apis/friend";
 import { useEffect, useState } from "react";
 import { useLoading } from "@/providers/LoaderProvider";
+import { FriendCatObjType } from "@/types/user";
 
 const ListItem = ({ item }: any) => {
-  console.log(item);
   return (
     <div className="border-b-1 py-2 px-2 flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -35,7 +35,15 @@ const ListItem = ({ item }: any) => {
   );
 };
 
-export default function FriendTable({ cat }: { cat: string }) {
+interface FriendTableProps {
+  cat: string;
+  handleSetCatCount: (newObj: FriendCatObjType) => void;
+}
+
+export default function FriendTable({
+  cat,
+  handleSetCatCount,
+}: FriendTableProps) {
   const [listFriend, setListFriend] = useState([]);
 
   const loader = useLoading();

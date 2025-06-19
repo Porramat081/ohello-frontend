@@ -19,7 +19,7 @@ const UserContext = createContext<any>(null);
 type ActivePostType = true | false | PostType;
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<UserType | {} | null>({});
   const [activePost, setActivePost] = useState<ActivePostType>(false);
 
   const router = useRouter();
@@ -29,16 +29,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     try {
       loader?.setLoading(true);
       const res = await getMe();
-      if (res.data?.success) {
-        setUser(res.data?.user);
-        if (res.data?.user.status === "Pending") {
-          router.replace("/verify");
+      if (res.data) {
+        if (res.data.success) {
+          setUser(res.data.user);
+          if (res.data?.user.status === "Pending") {
+            router.replace("/verify");
+          }
+          return;
+        } else {
+          console.log("user fetch");
+          setUser(null);
+          return;
         }
-        return;
-      } else {
-        console.log("user fetch");
-        setUser(null);
-        return;
       }
     } catch (error) {
       errorAxios(error);

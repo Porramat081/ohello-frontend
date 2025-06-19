@@ -6,3 +6,10 @@ export type UserType = {
   surname: string;
   status: "Active" | "Inactive" | "Pending" | "Banned";
 };
+
+export type FriendCatObjType = {
+  suggestFriend: number | null;
+  yourFriend: number | null;
+  requestFriend: number | null;
+  blockFriend: number | null;
+};

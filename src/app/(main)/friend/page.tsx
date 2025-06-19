@@ -2,11 +2,19 @@
 
 import FriendList from "@/components/FriendList";
 import { Separator } from "@/components/Separator";
+import { useAuthorize } from "@/hooks/useForm";
 import { useUser } from "@/providers/UserProvider";
+import { useEffect } from "react";
 
 export default function FriendPage() {
   const { user } = useUser();
-  if (!user) {
+  const { changeRoute } = useAuthorize();
+  useEffect(() => {
+    if (!user) {
+      changeRoute();
+    }
+  }, [user]);
+  if (!user || (!user.id && user.status !== "Active")) {
     return;
   }
   return (

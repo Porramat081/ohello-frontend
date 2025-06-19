@@ -58,7 +58,7 @@ export const useAuthorize = () => {
       loadingProvider?.setLoading(true);
       if (!user) {
         toast.error("Unauthorized , Please login first");
-        router.push("/auth/sigin");
+        router.push("/auth/signin");
         return;
       } else {
         if (user.status === "Pending") {

@@ -53,6 +53,7 @@ export default function SignInForm() {
           <div className="relative mb-2">
             <Input
               required
+              autoComplete="current-password"
               type={showPassword ? "text" : "password"}
               defaultValue={state.value?.password}
               name="login-password"

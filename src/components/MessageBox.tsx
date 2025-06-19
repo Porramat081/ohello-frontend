@@ -4,15 +4,23 @@ import { Button } from "./Button";
 import { Textarea } from "./Textarea";
 import { Send } from "lucide-react";
 
-export default function MessageBox() {
+interface MessageBoxProps {
+  roomId: string;
+  handleChangeRoom: (rid: string) => void;
+}
+
+export default function MessageBox(props: MessageBoxProps) {
   const [message, setMessage] = useState("");
   const [recievedMessages, setRecievedMessages] = useState<string[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
+    if (!props.roomId) return;
     //ws connection
     socketRef.current = new WebSocket(
-      (process.env.NEXT_PUBLIC_WEB_SOCKET || "") + "/wsMessage"
+      (process.env.NEXT_PUBLIC_WEB_SOCKET || "") +
+        "/wsMessage/" +
+        `${props.roomId}`
     );
     //ws open
     socketRef.current.onopen = () => {
@@ -29,28 +37,28 @@ export default function MessageBox() {
     };
     //connection error
     socketRef.current.onerror = (error) => {
-      console.error("WebSocket error : ", error);
+      props.handleChangeRoom("");
+      console.log("WebSocket error : ", error);
     };
     return () => {
       if (socketRef.current) {
         socketRef.current.close();
       }
     };
-  }, []);
+  }, [props.roomId]);
 
   const handleChangeMessage = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
   };
   const handleSendMessage = () => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      const data = JSON.stringify({
-        message: message,
-        targetId: 5,
-      });
-      socketRef.current.send(data);
+      socketRef.current.send(message);
     }
     setMessage(() => "");
   };
+  if (!props.roomId) {
+    return <div>Please Select Chat To Start</div>;
+  }
   return (
     <div>
       <div className="px-2 flex justify-between items-center">

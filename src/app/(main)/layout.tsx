@@ -17,7 +17,11 @@ export default function MainLayout({
   }, []);
 
   return (
-    <div className="relative min-h-svh md:max-w-[760px] lg:max-w-[1000px] xl:max-w-[1200px] grid grid-cols-1 sm:grid-cols-8 lg:grid-cols-9 mx-auto">
+    <div
+      className={`relative min-h-svh md:max-w-[760px] lg:max-w-[1000px] xl:max-w-[1200px] grid grid-cols-1 sm:grid-cols-8 ${
+        user && "lg:grid-cols-9"
+      } mx-auto`}
+    >
       <div className="hidden sm:flex justify-start border-r pr-3 px-2 xl:px-0 col-span-2 lg:col-span-2">
         {user && user.status === "Active" && <MenuUser user={user} />}
       </div>
