@@ -13,3 +13,5 @@ export type FriendCatObjType = {
   requestFriend: number | null;
   blockFriend: number | null;
 };
+
+export type FriendListObjType = {};

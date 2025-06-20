@@ -4,7 +4,7 @@ import FriendTable from "./FriendTable";
 import { FriendCatObjType } from "@/types/user";
 
 export default function FriendList() {
-  const [cat, setCat] = useState("Friends");
+  const [cat, setCat] = useState("Suggest Friends");
   const [catCount, setCatCount] = useState<FriendCatObjType>({
     suggestFriend: null,
     yourFriend: null,

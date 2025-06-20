@@ -1,6 +1,6 @@
 import axiosInstance from "@/lib/axios";
 
-export const getFriends = async (cat: string) => {
-  const result = await axiosInstance.get("/api/friend/getFriend/" + cat);
+export const getFriends = async () => {
+  const result = await axiosInstance.get("/api/friend/getFriend");
   return result.data;
 };
