@@ -37,7 +37,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           }
           return;
         } else {
-          console.log("user fetch");
           setUser(null);
           return;
         }

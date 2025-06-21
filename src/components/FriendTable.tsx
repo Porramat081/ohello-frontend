@@ -1,20 +1,13 @@
 import { errorAxios } from "@/lib/errorHandle";
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
-import { Button } from "./Button";
 import { getFriends } from "@/apis/friend";
 import { useEffect, useState } from "react";
 import { useLoading } from "@/providers/LoaderProvider";
 import { FriendCatObjType } from "@/types/user";
 import { genAbbration } from "@/lib/utils";
+import FriendActiveBtn from "./FriendActiveBtn";
 
 const ListItem = ({ item, cat }: any) => {
-  const handleClickBtn = () => {
-    if (cat === "Suggest Friends") {
-      console.log("add friend");
-    } else if (cat === "Your Friends") {
-      console.log("start chat");
-    }
-  };
   return (
     <div className="border-b-1 py-2 px-2 flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -35,9 +28,7 @@ const ListItem = ({ item, cat }: any) => {
       </div>
 
       <div>
-        <Button variant={"outline"} className="text-xs">
-          UnFollow
-        </Button>
+        <FriendActiveBtn item={item} cat={cat} />
       </div>
     </div>
   );
@@ -61,7 +52,6 @@ export default function FriendTable({
     try {
       loader?.setLoading(true);
       const result = await getFriends();
-      console.log(result);
       if (result.success) {
         setListFriend({
           friends: result.friends,
@@ -69,6 +59,12 @@ export default function FriendTable({
           yourRequest: result.yourRequest,
           yourReceive: result.yourReceive,
           yourBlock: result.yourBlock,
+        });
+        handleSetCatCount({
+          suggestFriend: result.friends.length,
+          yourFriend: result.yourFriend.length,
+          requestFriend: [...result.yourRequest, ...result.yourReceive].length,
+          blockFriend: result.yourBlock.length,
         });
         setShowList(result.friends);
       } else {
@@ -86,7 +82,6 @@ export default function FriendTable({
   }, []);
 
   useEffect(() => {
-    console.log(listFriend);
     if (cat === "Suggest Friends") {
       setShowList(listFriend.friends);
     } else if (cat === "Your Friends") {
@@ -103,7 +98,9 @@ export default function FriendTable({
       <h2 className="text-primary text-xs font-bold mb-3 px-4">{cat}</h2>
       <div className="">
         {showList?.length > 0 &&
-          showList.map((item, index) => <ListItem key={index} item={item} />)}
+          showList.map((item, index) => (
+            <ListItem key={index} item={item} cat={cat} />
+          ))}
       </div>
     </div>
   );

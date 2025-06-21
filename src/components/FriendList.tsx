@@ -16,7 +16,7 @@ export default function FriendList() {
   };
   return (
     <div className="grid grid-cols-1">
-      <FriendCategory cat={cat} setCat={setCat} />
+      <FriendCategory cat={cat} setCat={setCat} catCount={catCount} />
       <FriendTable cat={cat} handleSetCatCount={handleSetCatCount} />
     </div>
   );
