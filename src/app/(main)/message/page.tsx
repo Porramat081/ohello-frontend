@@ -11,7 +11,7 @@ import { useUser } from "@/providers/UserProvider";
 import { useEffect, useState } from "react";
 
 export default function MessagePage() {
-  const [roomId, setRoomId] = useState<string>("");
+  const [targetId, setTargetId] = useState<string>("");
 
   const [roomList, setRoomList] = useState([]);
 
@@ -25,7 +25,6 @@ export default function MessagePage() {
       const res = await getChatRoom();
       if (res.success) {
         setRoomList(res.chatRooms);
-        console.log(res.chatRooms);
       }
     } catch (error) {
       errorAxios(error);
@@ -46,19 +45,23 @@ export default function MessagePage() {
     return;
   }
   const handleChangeRoom = (rid: string) => {
-    setRoomId(rid);
+    setTargetId(rid);
   };
   return (
     <div className="pt-2">
       <h2 className="text-sm font-bold text-primary px-2">Messages</h2>
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col">
         <MessageList
-          roomId={roomId}
+          targetId={targetId}
           roomList={roomList}
           handleChangeRoom={handleChangeRoom}
         />
-        <Separator className="lg:hidden my-2" />
-        <MessageBox roomId={roomId} handleChangeRoom={handleChangeRoom} />
+        <Separator className="my-2" />
+        <MessageBox
+          targetId={targetId}
+          handleChangeRoom={handleChangeRoom}
+          userId={user.id}
+        />
       </div>
     </div>
   );

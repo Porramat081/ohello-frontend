@@ -95,3 +95,13 @@ export function formatDateWithAmPm(
 
   return finalString;
 }
+
+export function formatMonthYear(createdAt: Date | undefined) {
+  if (!createdAt) return;
+  const date = new Date(createdAt);
+  const formatted = date.toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+  return formatted;
+}

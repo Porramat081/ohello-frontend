@@ -8,6 +8,7 @@ import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Button } from "./Button";
 
 export default function HeaderBtn() {
   const [isDark, setIsDark] = useState(false);
@@ -72,12 +73,12 @@ export default function HeaderBtn() {
           go to page
         </button>
       ) : (
-        <button
+        <Button
           className="text-white hover:text-muted-foreground hover:underline cursor-pointer"
           onClick={handleClickUserBtn}
         >
           {user ? "sign out" : "sign in"}
-        </button>
+        </Button>
       )}
 
       {user && user.status === "Pending" && (

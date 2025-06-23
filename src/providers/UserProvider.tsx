@@ -28,21 +28,20 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const fetchUser = async () => {
     try {
       loader?.setLoading(true);
+
       const res = await getMe();
-      if (res.data) {
-        if (res.data.success) {
-          setUser(res.data.user);
-          if (res.data?.user.status === "Pending") {
-            router.replace("/verify");
-          }
-          return;
-        } else {
-          setUser(null);
-          return;
+
+      if (res.success) {
+        setUser(res.user);
+        if (res.user?.status === "Pending") {
+          router.replace("/verify");
         }
+      } else {
+        setUser(null);
       }
     } catch (error) {
       errorAxios(error);
+      setUser(null);
     } finally {
       loader?.setLoading(false);
     }
@@ -54,6 +53,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     fetchUser();
+    console.log(user);
   }, []);
 
   return (

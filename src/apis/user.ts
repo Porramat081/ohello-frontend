@@ -20,7 +20,7 @@ export const authCheck = async () => {
 
 export const getMe = async () => {
   const result = await axiosInstance.get("/api/user");
-  return result;
+  return result.data;
 };
 
 export const userSignin = async (data: UserSigninInput) => {
