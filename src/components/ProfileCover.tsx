@@ -3,6 +3,9 @@ import { Camera, LogOut, MessageCircle, UserPlus2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { Button } from "./Button";
+import { useRef, useState } from "react";
+import { errorAxios } from "@/lib/errorHandle";
+import { updateUser } from "@/apis/user";
 
 interface ProfileCoverProps {
   imgSrc: string | undefined;
@@ -12,33 +15,88 @@ const isUser = true;
 const isFriend = true;
 
 export default function ProfileCover({ imgSrc }: ProfileCoverProps) {
-  const handleAddCoverImg = () => {};
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    try {
+      if (event.target.files) {
+        const file = event.target.files[0];
+
+        console.log(file);
+
+        if (file) {
+          const newFormData = new FormData();
+          newFormData.append("profileCoverUrl", file);
+          const res = await updateUser(newFormData);
+        }
+      }
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      errorAxios(error);
+    } finally {
+    }
+  };
   const handleLogout = () => {};
   return (
     <div className="relative h-[200px] w-auto">
       {imgSrc ? (
-        <Image
-          src={imgSrc}
-          alt="profile-cover"
-          fill
-          className="absolute top-0 left-0 object-fill aspect-video"
-        />
+        <>
+          <Image
+            src={imgSrc}
+            alt="profile-cover"
+            fill
+            sizes=""
+            className="absolute top-0 left-0 object-fill aspect-video"
+          />
+          <div className="z-10 flex flex-col items-center relative top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={(event) => handleFileChange(event)}
+            />
+            <button
+              className="flex flex-col items-center justify-center hover:text-primary cursor-pointer"
+              type="button"
+              onClick={triggerFileInput}
+            >
+              <Camera size={20} />
+              <span className="text-xs font-semibold">
+                {imgSrc ? "Edit Photo" : "Add Photo"}
+              </span>
+            </button>
+          </div>
+        </>
       ) : (
         <div className="flex items-center justify-center h-full bg-secondary ">
-          <div className="flex flex-col items-center justify-center">
-            <Camera
-              size={20}
-              className="hover:text-primary cursor-pointer"
-              onClick={handleAddCoverImg}
-            />
-
-            <span
-              className="text-xs font-semibold hover:text-primary cursor-pointer"
-              onClick={handleAddCoverImg}
-            >
-              Add Photo
-            </span>
-          </div>
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            ref={fileInputRef}
+            onChange={(event) => handleFileChange(event)}
+          />
+          <button
+            className="flex flex-col items-center justify-center hover:text-primary cursor-pointer"
+            type="button"
+            onClick={triggerFileInput}
+          >
+            <Camera size={20} />
+            <span className="text-xs font-semibold">Add Photo</span>
+          </button>
         </div>
       )}
 

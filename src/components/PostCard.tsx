@@ -117,6 +117,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
                       src={item.url}
                       alt="post-image"
                       fill
+                      sizes=""
                     />
                   )}
                 </div>

@@ -1,4 +1,5 @@
-import axiosInstance from "@/lib/axios";
+import axiosInstance, { axiosInstance2 } from "@/lib/axios";
+import { UpdateUserType } from "@/types/user";
 
 interface UserSigninInput {
   email: string;
@@ -52,5 +53,10 @@ export const verifyUser = async (verifyCode: string) => {
   const result = await axiosInstance.post("/api/user/verifyUser", {
     verifyCode,
   });
+  return result.data;
+};
+
+export const updateUser = async (data: UpdateUserType | FormData) => {
+  const result = await axiosInstance2.patch("/api/user/updateUser", data);
   return result.data;
 };

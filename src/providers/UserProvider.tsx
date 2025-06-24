@@ -58,7 +58,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, clearUser, fetchUser, activePost, setActivePost }}
+      value={{ user, setUser, clearUser, fetchUser, activePost, setActivePost }}
     >
       {children}
     </UserContext.Provider>

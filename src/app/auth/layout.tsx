@@ -28,6 +28,7 @@ export default function AuthLayout({
             src="/info_1.jpg" // Replace with your SVG/PNG path
             alt="Illustration"
             fill
+            sizes=""
             className="absolute"
           />
         </div>
