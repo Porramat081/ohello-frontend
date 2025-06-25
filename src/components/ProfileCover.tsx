@@ -6,17 +6,21 @@ import { Button } from "./Button";
 import { useRef, useState } from "react";
 import { errorAxios } from "@/lib/errorHandle";
 import { updateUser } from "@/apis/user";
+import { genAbbration } from "@/lib/utils";
+import { UserType } from "@/types/user";
+import { useLoading } from "@/providers/LoaderProvider";
 
 interface ProfileCoverProps {
-  imgSrc: string | undefined;
+  user: UserType;
+  fetchUser: () => Promise<{}>;
 }
 
 const isUser = true;
 const isFriend = true;
 
-export default function ProfileCover({ imgSrc }: ProfileCoverProps) {
-  const [coverImage, setCoverImage] = useState<File | null>(null);
+export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const loader = useLoading();
 
   const triggerFileInput = () => {
     if (fileInputRef.current) {
@@ -28,36 +32,39 @@ export default function ProfileCover({ imgSrc }: ProfileCoverProps) {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     try {
+      loader?.setLoading(true);
       if (event.target.files) {
         const file = event.target.files[0];
-
-        console.log(file);
 
         if (file) {
           const newFormData = new FormData();
           newFormData.append("profileCoverUrl", file);
           const res = await updateUser(newFormData);
+          if (res.success) {
+            await fetchUser();
+          }
         }
       }
-
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
     } catch (error) {
       errorAxios(error);
     } finally {
+      loader?.setLoading(false);
     }
   };
   const handleLogout = () => {};
   return (
     <div className="relative h-[200px] w-auto">
-      {imgSrc ? (
+      {user.profileCoverUrl ? (
         <>
           <Image
-            src={imgSrc}
+            src={user.profileCoverUrl}
             alt="profile-cover"
             fill
-            sizes=""
+            sizes="200"
+            priority
             className="absolute top-0 left-0 object-fill aspect-video"
           />
           <div className="z-10 flex flex-col items-center relative top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
@@ -75,7 +82,7 @@ export default function ProfileCover({ imgSrc }: ProfileCoverProps) {
             >
               <Camera size={20} />
               <span className="text-xs font-semibold">
-                {imgSrc ? "Edit Photo" : "Add Photo"}
+                {user.profileCoverUrl ? "Edit Photo" : "Add Photo"}
               </span>
             </button>
           </div>
@@ -104,18 +111,20 @@ export default function ProfileCover({ imgSrc }: ProfileCoverProps) {
       <div className="absolute bottom-0 left-6 translate-y-[50%] w-full">
         <div className="flex items-center gap-3">
           <Avatar className="size-15 border-2 border-primary">
-            <AvatarImage src="https://github.com/shadcn.png"></AvatarImage>
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage src={user.profilePicUrl}></AvatarImage>
+            <AvatarFallback>
+              {genAbbration(user.firstName, user.surname)}
+            </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <span
               className="text-primary font-extrabold"
               style={{ WebkitTextStroke: "0.1px white" }}
             >
-              John Doe
+              {user.firstName + " " + user.surname}
             </span>
             <span className="text-xs font-semibold text-foreground">
-              @JohnDoeqq
+              {user.username && "@" + user.username}
             </span>
           </div>
         </div>

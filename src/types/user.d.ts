@@ -24,4 +24,5 @@ export type UpdateUserType = {
   username?: string;
   firstName?: string;
   surname?: string;
+  bio?: string;
 };

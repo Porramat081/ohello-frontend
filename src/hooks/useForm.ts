@@ -6,13 +6,18 @@ import { errorAxios } from "@/lib/errorHandle";
 import { useUser } from "@/providers/UserProvider";
 import { useLoading } from "@/providers/LoaderProvider";
 
-export const useForm = (action: ActionType, route?: string) => {
+export const useForm = (
+  action: ActionType,
+  route?: string,
+  fetchNewUser?: boolean
+) => {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [state, formAction, isPending] = useActionState(
     action,
     initialFormState
   );
 
+  const { fetchUser } = useUser();
   const router = useRouter();
 
   useEffect(() => {
@@ -25,6 +30,9 @@ export const useForm = (action: ActionType, route?: string) => {
     if (state.message) {
       if (state.success) {
         toast.success(state.message);
+        if (fetchNewUser) {
+          fetchUser();
+        }
         if (route) {
           router.push(route);
         }

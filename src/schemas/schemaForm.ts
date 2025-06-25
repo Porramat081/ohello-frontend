@@ -47,3 +47,46 @@ export const signInSchema = z.object({
     message: MIN.password.message,
   }),
 });
+
+export const profileShema = z
+  .object({
+    firstName: z
+      .string()
+      .min(MIN.firstname.value, { message: MIN.firstname.message })
+      .max(MAX.firstname.value, { message: MAX.firstname.message })
+      .regex(/^\S+$/, {
+        message: "Username cannot contain spaces",
+      }),
+    surname: z
+      .string()
+      .min(MIN.surname.value, { message: MIN.surname.message })
+      .max(MAX.surname.value, { message: MAX.surname.message })
+      .regex(/^\S+$/, {
+        message: "Surname cannot contain spaces",
+      }),
+    email: z.string().email({
+      message: EMAIL_ERROR.format,
+    }),
+    username: z
+      .string()
+      .min(6, { message: "Username must be at least 6 characters" })
+      .max(15, { message: "Username must be at most 15 characters" })
+      .regex(/^\S*$/, { message: "Username must not contain whitespace" })
+      .optional()
+      .or(z.literal("")),
+    oldPassword: z.string().optional().or(z.literal("")),
+    newPassword: z
+      .string()
+      .regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/, {
+        message:
+          "Password must be at least 8 characters, include one uppercase letter, one number, and one special character (!@#$%^&*)",
+      })
+      .optional()
+      .or(z.literal("")),
+    confirmPassword: z.string(),
+    defaultValue: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Password do not match",
+    path: ["confirmPassword"],
+  });

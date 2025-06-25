@@ -7,7 +7,7 @@ import { Separator } from "@/components/Separator";
 import { useUser } from "@/providers/UserProvider";
 
 export default function ProfilePage() {
-  const { user } = useUser();
+  const { user, fetchUser } = useUser();
 
   if (!user) {
     return;
@@ -16,11 +16,11 @@ export default function ProfilePage() {
   return (
     <div>
       {/* Profile Cover */}
-      <ProfileCover imgSrc={user.profileCoverUrl} />
+      <ProfileCover user={user} fetchUser={fetchUser} />
       {/* Bio */}
-      <BioComponent />
+      <BioComponent bio={user.bio} />
       <Separator className="my-5" />
-      <ProfileForm />
+      <ProfileForm user={user} />
     </div>
   );
 }

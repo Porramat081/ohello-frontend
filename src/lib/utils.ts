@@ -35,7 +35,11 @@ export function genErrorResponse(
   }
 }
 
-export function genAbbration(firstname: string, surname: string) {
+export function genAbbration(
+  firstname: string | undefined,
+  surname: string | undefined
+) {
+  if (!firstname || !surname) return;
   return firstname[0].toUpperCase() + surname[0].toUpperCase();
 }
 

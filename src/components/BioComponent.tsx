@@ -1,22 +1,50 @@
-import { Save } from "lucide-react";
-import SubmitBtn from "./SubmitBtn";
+import { SaveIcon } from "lucide-react";
 import { Textarea } from "./Textarea";
 import { useRef, useState } from "react";
+import { errorAxios } from "@/lib/errorHandle";
+import { useLoading } from "@/providers/LoaderProvider";
+import { updateUser } from "@/apis/user";
+import { toast } from "sonner";
+import { Button } from "./Button";
 
-export default function BioComponent() {
-  const [textBio, setTextBio] = useState("");
+interface BioComponentProps {
+  bio: string;
+}
+
+export default function BioComponent({ bio }: BioComponentProps) {
+  const [textBio, setTextBio] = useState(bio || "");
   const prevValue = useRef("");
+  const loader = useLoading();
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     const oldValue = prevValue.current;
-    if (newValue.length > oldValue.length && newValue.length <= 500) {
+    if (
+      newValue.length === 0 ||
+      (newValue.length > oldValue.length && newValue.length <= 500)
+    ) {
       setTextBio(newValue);
     } else {
       const cutText = newValue
         .substring(textBio.length)
         .substring(0, 500 - textBio.length);
       setTextBio((prev) => prev + cutText);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      loader?.setLoading(true);
+      if (textBio.trim()) {
+        const res = await updateUser({ bio: textBio });
+        if (res.success) {
+          toast.success(res.message);
+        }
+      }
+    } catch (error) {
+      errorAxios(error);
+    } finally {
+      loader?.setLoading(false);
     }
   };
   return (
@@ -33,7 +61,10 @@ export default function BioComponent() {
         </span>
       </div>
       <div className="mt-3 flex justify-end">
-        <SubmitBtn name="Save" icon={Save} />
+        <Button onClick={handleSave} className="cursor-pointer">
+          <SaveIcon size={16} />
+          Save
+        </Button>
       </div>
     </div>
   );
