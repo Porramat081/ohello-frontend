@@ -11,13 +11,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
 import MenuUserButton from "./MenuUserButton";
 import { Button } from "./Button";
-import Modal from "./Modal";
-import PostModal from "./PostModal";
-import { useState } from "react";
 import { UserType } from "@/types/user";
 import { genAbbration } from "@/lib/utils";
 import { useAuthorize } from "@/hooks/useForm";
-import { useRouter } from "next/navigation";
 import { useUser } from "@/providers/UserProvider";
 
 interface MenuUserProps {
@@ -25,7 +21,6 @@ interface MenuUserProps {
 }
 
 export default function MenuUser({ user }: MenuUserProps) {
-  const [openModal, setOpenModal] = useState(false);
   const { changeRoute } = useAuthorize();
 
   const { setActivePost } = useUser();

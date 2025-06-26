@@ -20,9 +20,13 @@ export type PostImage = {
 
 export type PostType = {
   id: string;
-  authorName: string;
-  authorID: string;
-  authorPicture: string;
+  author: {
+    firstName: string;
+    surname: string;
+    profilePicUrl: string;
+    username: string;
+  };
+  authorId: string;
   picUrls?: string[];
   content: string;
   createdAt: Date;

@@ -33,7 +33,7 @@ export default function MessageList(props: MessageListProps) {
                   props.targetId === item.id ? "border-2 border-primary" : ""
                 } cursor-pointer`}
               >
-                <AvatarImage src={item.profilePicUrl} />
+                <AvatarImage src={item.profilePicUrl?.pictureUrl} />
                 <AvatarFallback>
                   {genAbbration(item.firstName, item.surname)}
                 </AvatarFallback>

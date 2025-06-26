@@ -6,9 +6,8 @@ import { Send } from "lucide-react";
 import { useLoading } from "@/providers/LoaderProvider";
 import { errorAxios } from "@/lib/errorHandle";
 import { getChatByRoomId } from "@/apis/message";
-import ReceivedMessage from "./messageComponents/ReceivedMessage";
-import SenderMessage from "./messageComponents/SenderMessage";
-import { formatMonthYear, genAbbration } from "@/lib/utils";
+import { formatDateWithAmPm, formatMonthYear, genAbbration } from "@/lib/utils";
+import DateHeader from "./messageComponents/DateHeader";
 
 interface MessageBoxProps {
   targetId: string;
@@ -21,6 +20,8 @@ export default function MessageBox(props: MessageBoxProps) {
   const [targetUser, setTargetUser] = useState<any>(null);
   const [recievedMessages, setRecievedMessages] = useState<any[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [roomId, setRoomId] = useState("");
 
@@ -65,11 +66,17 @@ export default function MessageBox(props: MessageBoxProps) {
     //listen message
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
+
+      // if (data.read === "reading") {
+      //   alert("reading");
+      // }
+
       setRecievedMessages((prev) => [
         ...prev,
         {
           isReceived: data.writerId !== props.userId,
           content: data.message as string,
+          createdAt: data.createdAt as string,
         },
       ]);
     };
@@ -92,14 +99,28 @@ export default function MessageBox(props: MessageBoxProps) {
     };
   }, [roomId, props.targetId]);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [recievedMessages]);
+
   const handleChangeMessage = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
   };
   const handleSendMessage = () => {
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ message }));
+    if (!message.trim()) {
+      return;
     }
-    setRecievedMessages((prev) => [...prev, { content: message }]);
+    const dateNow = new Date().toString();
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify({ message, createdAt: dateNow }));
+    }
+    setRecievedMessages((prev) => [
+      ...prev,
+      { content: message, createdAt: dateNow, status: "Unread" },
+    ]);
     setMessage(() => "");
   };
   if (!roomId || !targetUser) {
@@ -111,7 +132,7 @@ export default function MessageBox(props: MessageBoxProps) {
       <div className="px-2 flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <Avatar>
-            <AvatarImage src={targetUser.profilePicUrl} />
+            <AvatarImage src={targetUser.profilePicUrl?.pictureUrl} />
             <AvatarFallback>
               {genAbbration(targetUser.firstName, targetUser.surname)}
             </AvatarFallback>
@@ -129,33 +150,35 @@ export default function MessageBox(props: MessageBoxProps) {
         <div className="text-[0.7rem]">
           {recievedMessages.length > 0 && (
             <span>
-              {recievedMessages[recievedMessages.length - 1].updatedAt}
+              {formatDateWithAmPm(
+                recievedMessages[recievedMessages.length - 1].createdAt,
+                recievedMessages[recievedMessages.length - 1].createdAt
+              )}
             </span>
           )}
         </div>
       </div>
 
       {/* message container */}
-      <div>
-        {/* Array receieved */}
-        {recievedMessages.map((item, index) => (
-          <div key={index}>
-            {item.isReceived || item.writerId === props.targetId ? (
-              <ReceivedMessage
-                content={item.content}
-                createdAt={item.createdAt}
-              />
-            ) : (
-              <SenderMessage
-                content={item.content}
-                createdAt={item.createdAt}
-              />
-            )}
-          </div>
-        ))}
+      <div className="p-2">
+        <div
+          ref={containerRef}
+          className="h-[400px] border-1 rounded-md overflow-y-auto pb-3"
+        >
+          {recievedMessages.length ? (
+            <DateHeader
+              messageArr={recievedMessages}
+              targetId={props.targetId}
+            />
+          ) : (
+            <div className="h-full flex items-center justify-center">
+              Empthy Message
+            </div>
+          )}
+        </div>
 
         {/* Message writer box */}
-        <div className="p-2 flex flex-col items-end gap-2">
+        <div className="py-2 flex flex-col items-end gap-2">
           <Textarea
             onChange={handleChangeMessage}
             placeholder="Type your message here."

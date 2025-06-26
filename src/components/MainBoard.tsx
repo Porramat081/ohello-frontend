@@ -115,7 +115,7 @@ export default function Mainboard() {
             <PostCard
               key={index}
               item={item}
-              isGuest={!user || user.id !== item.authorID}
+              isGuest={!user || user.id !== item.authorId}
             />
           ))}
         </div>

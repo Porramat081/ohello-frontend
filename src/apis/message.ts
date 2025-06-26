@@ -7,6 +7,5 @@ export const getChatRoom = async () => {
 
 export const getChatByRoomId = async (targetId: string) => {
   const result = await axiosInstance.get("/api/message/getChat/" + targetId);
-  console.log(result.data);
   return result.data;
 };

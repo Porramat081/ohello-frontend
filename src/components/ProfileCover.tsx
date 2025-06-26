@@ -1,9 +1,7 @@
 import { Avatar, AvatarImage, AvatarFallback } from "./Avatar";
-import { Camera, LogOut, MessageCircle, UserPlus2 } from "lucide-react";
-import { redirect } from "next/navigation";
+import { Camera } from "lucide-react";
 import Image from "next/image";
-import { Button } from "./Button";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { errorAxios } from "@/lib/errorHandle";
 import { updateUser } from "@/apis/user";
 import { genAbbration } from "@/lib/utils";
@@ -15,11 +13,10 @@ interface ProfileCoverProps {
   fetchUser: () => Promise<{}>;
 }
 
-const isUser = true;
-const isFriend = true;
-
 export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef2 = useRef<HTMLInputElement>(null);
+
   const loader = useLoading();
 
   const triggerFileInput = () => {
@@ -28,8 +25,15 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
     }
   };
 
+  const triggerFileInput2 = () => {
+    if (fileInputRef2.current) {
+      fileInputRef2.current.click();
+    }
+  };
+
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: "profileCoverUrl" | "profilePicUrl"
   ) => {
     try {
       loader?.setLoading(true);
@@ -38,15 +42,21 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
 
         if (file) {
           const newFormData = new FormData();
-          newFormData.append("profileCoverUrl", file);
+          newFormData.append(type, file);
           const res = await updateUser(newFormData);
           if (res.success) {
             await fetchUser();
           }
         }
       }
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+      if (type === "profileCoverUrl") {
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      } else {
+        if (fileInputRef2.current) {
+          fileInputRef2.current.value = "";
+        }
       }
     } catch (error) {
       errorAxios(error);
@@ -54,11 +64,11 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
       loader?.setLoading(false);
     }
   };
-  const handleLogout = () => {};
+
   return (
-    <div className="relative h-[200px] w-auto">
-      {user.profileCoverUrl ? (
-        <>
+    <div className="bg-secondary relative h-[200px] w-auto">
+      <div>
+        {user.profileCoverUrl ? (
           <Image
             src={user.profileCoverUrl}
             alt="profile-cover"
@@ -67,93 +77,63 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
             priority
             className="absolute top-0 left-0 object-fill aspect-video"
           />
-          <div className="z-10 flex flex-col items-center relative top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              ref={fileInputRef}
-              onChange={(event) => handleFileChange(event)}
-            />
-            <button
-              className="flex flex-col items-center justify-center hover:text-primary cursor-pointer"
-              type="button"
-              onClick={triggerFileInput}
-            >
-              <Camera size={20} />
-              <span className="text-xs font-semibold">
-                {user.profileCoverUrl ? "Edit Photo" : "Add Photo"}
-              </span>
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className="flex items-center justify-center h-full bg-secondary ">
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={(event) => handleFileChange(event)}
-          />
-          <button
-            className="flex flex-col items-center justify-center hover:text-primary cursor-pointer"
-            type="button"
-            onClick={triggerFileInput}
-          >
-            <Camera size={20} />
-            <span className="text-xs font-semibold">Add Photo</span>
-          </button>
-        </div>
-      )}
+        ) : (
+          <div className="h-full w-auto bg-secondary"></div>
+        )}
+      </div>
+      <div className="z-10 flex flex-col items-center relative top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={(event) => handleFileChange(event, "profileCoverUrl")}
+        />
+        <button
+          className="flex flex-col items-center justify-center hover:text-primary cursor-pointer"
+          type="button"
+          onClick={triggerFileInput}
+        >
+          <Camera size={20} />
+          <span className="text-xs font-semibold">
+            {user.profileCoverUrl ? "Edit Photo" : "Add Photo"}
+          </span>
+        </button>
+      </div>
 
       {/* Profile Header */}
       <div className="absolute bottom-0 left-6 translate-y-[50%] w-full">
         <div className="flex items-center gap-3">
-          <Avatar className="size-15 border-2 border-primary">
+          <input
+            className="hidden"
+            type="file"
+            accept="image/*"
+            ref={fileInputRef2}
+            onChange={(event) => handleFileChange(event, "profilePicUrl")}
+          />
+          <Avatar
+            onClick={triggerFileInput2}
+            className="size-15 border-2 border-primary cursor-pointer"
+          >
             <AvatarImage src={user.profilePicUrl}></AvatarImage>
             <AvatarFallback>
               {genAbbration(user.firstName, user.surname)}
             </AvatarFallback>
           </Avatar>
-          <div className="flex flex-col">
-            <span
-              className="text-primary font-extrabold"
-              style={{ WebkitTextStroke: "0.1px white" }}
-            >
-              {user.firstName + " " + user.surname}
-            </span>
-            <span className="text-xs font-semibold text-foreground">
-              {user.username && "@" + user.username}
-            </span>
-          </div>
-        </div>
-      </div>
 
-      <div className="absolute bottom-[-3rem] lg:bottom-0 translate-y-[50%] right-0 lg:right-6">
-        <div className="flex gap-2 pr-2 lg:pr-0">
-          {isUser ? (
-            <Button
-              variant={"destructive"}
-              onClick={() => redirect("/auth/signin")}
-            >
-              <LogOut size={16} />
-              Logout
-            </Button>
-          ) : (
-            isFriend && (
-              <>
-                <Button>
-                  <UserPlus2 size={16} />
-                  Add
-                </Button>
-                <Button variant={"outline"}>
-                  <MessageCircle size={16} />
-                  Chat
-                </Button>
-              </>
-            )
-          )}
+          <div className="flex flex-col ">
+            <div className="backdrop-blur-md backdrop-contrast-125 bg-white/20 text-white px-2 rounded-xl shadow-sm">
+              <span
+                className="text-primary dark:text-white font-extrabold"
+                // style={{ WebkitTextStroke: "0.1px white" }}
+              >
+                {user.firstName + " " + user.surname}
+              </span>
+            </div>
+            <div className="text-xs font-semibold text-foreground">
+              {user.username && "@" + user.username}
+            </div>
+          </div>
         </div>
       </div>
     </div>

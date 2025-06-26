@@ -7,7 +7,7 @@ import { Label } from "./Label";
 import { UserType } from "@/types/user";
 import { genInputFormClass } from "@/lib/utils";
 import { Button } from "./Button";
-import { Eye, EyeClosed } from "lucide-react";
+import { Eye, EyeClosed, Save } from "lucide-react";
 import SubmitBtn from "./SubmitBtn";
 import ErrorMessage from "./ErrorMessage";
 
@@ -206,7 +206,8 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         <SubmitBtn
           name={"Save Change"}
           pending={isPending}
-          addclassname={"w-full"}
+          icon={Save}
+          addclassname={"w-full dark:text-white"}
         />
       </div>
     </Form>

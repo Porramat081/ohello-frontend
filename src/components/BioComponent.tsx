@@ -12,7 +12,7 @@ interface BioComponentProps {
 }
 
 export default function BioComponent({ bio }: BioComponentProps) {
-  const [textBio, setTextBio] = useState(bio || "");
+  const [textBio, setTextBio] = useState(bio);
   const prevValue = useRef("");
   const loader = useLoading();
 
@@ -53,15 +53,15 @@ export default function BioComponent({ bio }: BioComponentProps) {
       <div className="relative">
         <Textarea
           onChange={handleTextChange}
-          value={textBio}
+          value={textBio || ""}
           className="px-4 py-1 resize-none bg-foreground/10 my-3 h-20 font-[500] text-sm tracking-wide"
         />
         <span className="absolute bottom-[-1.1rem] left-0 text-xs font-semibold">
-          {textBio.length} / 500
+          {textBio?.length || 0} / 500
         </span>
       </div>
       <div className="mt-3 flex justify-end">
-        <Button onClick={handleSave} className="cursor-pointer">
+        <Button onClick={handleSave} className="cursor-pointer dark:text-white">
           <SaveIcon size={16} />
           Save
         </Button>

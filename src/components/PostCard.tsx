@@ -16,7 +16,7 @@ import CommentCard from "./CommentCard";
 import { useAuthorize } from "@/hooks/useForm";
 import DropdownPostcard from "./DropDownPostCard";
 import { useUser } from "@/providers/UserProvider";
-import { formatDateWithAmPm } from "@/lib/utils";
+import { formatDateWithAmPm, genAbbration } from "@/lib/utils";
 
 interface PostCardProps {
   item: PostType;
@@ -58,8 +58,10 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
 
   const handleDelete = () => {
     console.log("Delete");
-    alert(item.createdAt);
+    alert(item);
   };
+
+  console.log(item);
 
   useEffect(() => {
     if (!api) return;
@@ -76,15 +78,17 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
       <div className="flex justify-between items-center px-3 py-1">
         <div className="flex gap-3 items-center pt-2">
           <Avatar className="size-11 border-1">
-            <AvatarImage src={item.authorPicture} />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage src={item.author?.profilePicUrl} />
+            <AvatarFallback>
+              {genAbbration(item.author?.firstName, item.author?.surname)}
+            </AvatarFallback>
           </Avatar>
 
           <div className="flex flex-col">
             <span className="text-sm text-center font-medium">
-              {item.authorName}
+              {item.author?.firstName + " " + item.author?.surname}
             </span>
-            <span className="text-xs font-light">{item.authorID}</span>
+            <span className="text-xs font-light">{item.author?.username}</span>
           </div>
         </div>
         <div className="flex items-center gap-1">
