@@ -31,7 +31,7 @@ export type PostType = {
   content: string;
   createdAt: Date;
   updatedAt: Date;
-  comments?: CommentType[];
+  commentCount: number;
   likes?: number;
   images?: PostImage[];
 };

@@ -24,3 +24,8 @@ export const editPost = async (postId: string, data: PostObjInput) => {
   );
   return result.data;
 };
+
+export const getComment = async (postId: string) => {
+  const result = await axiosInstance.get("/api/post/getComment/" + postId);
+  return result.data;
+};

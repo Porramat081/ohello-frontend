@@ -11,11 +11,17 @@ import Form from "next/form";
 import { useEffect, useState } from "react";
 import { Textarea } from "./Textarea";
 import { useForm } from "@/hooks/useForm";
-import { createComment } from "@/actions/comment";
 import ErrorMessage from "./ErrorMessage";
 import SubmitBtn from "./SubmitBtn";
 import { Button } from "./Button";
 import { Eraser } from "lucide-react";
+import { formatDateWithAmPm, genAbbration } from "@/lib/utils";
+import { useUser } from "@/providers/UserProvider";
+import { createNewPostAction } from "@/actions/post";
+import { useLoading } from "@/providers/LoaderProvider";
+import { errorAxios } from "@/lib/errorHandle";
+import { getComment } from "@/apis/post";
+import PostCard from "./PostCard";
 
 interface CommentCardProps {
   item: PostType;
@@ -31,11 +37,29 @@ export default function CommentCard({
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [commemtList, setCommentList] = useState([]);
+
+  const { user } = useUser();
+  const loader = useLoading();
 
   const [content, setContent] = useState("");
 
   const { errors, formAction, isPending, state, clearErrors } =
-    useForm(createComment);
+    useForm(createNewPostAction);
+
+  const fetchComment = async () => {
+    try {
+      loader?.setLoading(true);
+      const res = await getComment(item.id);
+      if (res.posts?.length) {
+        setCommentList(res.posts);
+      }
+    } catch (error) {
+      errorAxios(error);
+    } finally {
+      loader?.setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!api) return;
@@ -52,9 +76,13 @@ export default function CommentCard({
     }
   }, [state, onClose]);
 
+  useEffect(() => {
+    fetchComment();
+  }, []);
+
   const handleSubmit = async (formData: FormData) => {
-    formData.append("post-id", item.id);
-    formData.append("comment-content", content);
+    formData.append("host-post-id", item.id);
+    formData.append("content", content);
     return formAction(formData);
   };
 
@@ -64,29 +92,29 @@ export default function CommentCard({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 overflow-auto">
-      <div className="col-span-2">
+    <div className="grid grid-cols-1 lg:grid-cols-5 overflow-auto">
+      <div className="col-span-3">
         <div className="flex justify-between items-center px-3 py-1">
           <div className="flex gap-3 items-center pt-2">
             <Avatar className="size-11 border-1">
-              <AvatarImage src={item.authorPicture} />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src={item.author?.profilePicUrl} />
+              <AvatarFallback>
+                {genAbbration(item.author?.firstName, item.author?.surname)}
+              </AvatarFallback>
             </Avatar>
 
             <div className="flex flex-col">
               <span className="text-sm text-center font-medium">
-                {item.authorName}
+                {item.author?.firstName + " " + item.author?.surname}
               </span>
-              <span className="text-xs font-light">{item.authorID}</span>
+              <span className="text-xs font-light">
+                {item.author?.username}
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-1">
             <span className="text-xs font-light">
-              {item.createdAt.toLocaleString("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-              })}
+              {formatDateWithAmPm(item.createdAt, item.updatedAt)}
             </span>
           </div>
         </div>
@@ -115,15 +143,23 @@ export default function CommentCard({
           </Carousel>
         )}
       </div>
-      <div className="col-span-1 mt-2 lg:mt-0 lg:border-l">
+      <div className="col-span-2 mt-2 lg:mt-0 lg:border-l">
         {/* Comment panal */}
-        <div>
-          <h2 className="text-center mt-2">There's no any comment here</h2>
-        </div>
+        {commemtList.length > 0 ? (
+          <>
+            {commemtList.map((item, index) => (
+              <PostCard item={item} isGuest={isGuest} key={index} />
+            ))}
+          </>
+        ) : (
+          <div>
+            <h2 className="text-center mt-2">There's no any comment here</h2>
+          </div>
+        )}
 
         {/* Comment Input */}
 
-        {!isGuest && (
+        {user.id && (
           <div className="mt-4 px-4">
             <Form action={handleSubmit} onChange={clearErrors}>
               <Textarea

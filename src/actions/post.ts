@@ -14,12 +14,18 @@ export const createNewPostAction = async (
   const rawData = {
     content: formData.get("content") as string,
     images: formData.getAll("images") as File[],
+    hostPostId: (formData.get("host-post-id") as string) || undefined,
   };
 
   const deletedImageIds = formData.get("deleted-image-ids") as string;
   if (deletedImageIds) {
     (
-      rawData as { content: string; images: File[]; deletedImageIds: string }
+      rawData as {
+        content: string;
+        images: File[];
+        deletedImageIds: string;
+        hostPostId: string | undefined;
+      }
     ).deletedImageIds = deletedImageIds;
   }
 

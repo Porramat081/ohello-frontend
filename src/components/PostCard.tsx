@@ -61,8 +61,6 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
     alert(item);
   };
 
-  console.log(item);
-
   useEffect(() => {
     if (!api) return;
     setCount(api.scrollSnapList().length);
@@ -153,9 +151,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
               className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer"
             >
               <MessageSquareText />
-              <span className="text-xs">
-                {item.comments ? item.comments.length : 0}
-              </span>
+              <span className="text-xs">{item.commentCount}</span>
             </Button>
           </div>
 
