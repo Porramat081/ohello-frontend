@@ -32,8 +32,9 @@ export type PostType = {
   createdAt: Date;
   updatedAt: Date;
   commentCount: number;
-  likes?: number;
+  like: [];
   images?: PostImage[];
+  hostPostId?: string;
 };
 
 export type PostStatus = "Private" | "Public" | "Draft" | "FriendOnly";

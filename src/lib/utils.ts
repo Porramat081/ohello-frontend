@@ -92,10 +92,10 @@ export function formatDateWithAmPm(
 
   const hourString = String(hours).padStart(2, "0");
   //const finalString = `${day}/${month}/${year} ${hourString}:${minutes} ${ampm}`;
-  const finalString = `${hourString}:${minutes} ${ampm}`;
+  const finalString = `${hourString}:${minutes} ${ampm}\n${day} ${month} ${year}`;
 
   if (createdDate < updatedDate) {
-    return "edited " + finalString;
+    return "updated " + finalString;
   }
 
   return finalString;

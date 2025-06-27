@@ -29,3 +29,8 @@ export const getComment = async (postId: string) => {
   const result = await axiosInstance.get("/api/post/getComment/" + postId);
   return result.data;
 };
+
+export const likeUnlikePost = async (postId: string) => {
+  const result = await axiosInstance.post("/api/post/likePost", { postId });
+  return result.data;
+};

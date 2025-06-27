@@ -146,21 +146,21 @@ export default function CommentCard({
       <div className="col-span-2 mt-2 lg:mt-0 lg:border-l">
         {/* Comment panal */}
         {commemtList.length > 0 ? (
-          <>
+          <div className="h-[380px] border-1 lg:border-0 overflow-y-auto">
             {commemtList.map((item, index) => (
               <PostCard item={item} isGuest={isGuest} key={index} />
             ))}
-          </>
+          </div>
         ) : (
           <div>
-            <h2 className="text-center mt-2">There's no any comment here</h2>
+            <h2 className="text-center mt-2">Theres no any comment here</h2>
           </div>
         )}
 
         {/* Comment Input */}
 
-        {user.id && (
-          <div className="mt-4 px-4">
+        {user?.id && (
+          <div className="mt-4 lg:px-2">
             <Form action={handleSubmit} onChange={clearErrors}>
               <Textarea
                 value={content}
@@ -174,8 +174,7 @@ export default function CommentCard({
                 <Button
                   onClick={handleClear}
                   type="button"
-                  className="cursor-pointer bg-red-400 text-primary-foreground"
-                >
+                  className="cursor-pointer bg-red-400 text-primary-foreground">
                   <Eraser size={16} />
                   Clear
                 </Button>
