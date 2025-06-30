@@ -93,15 +93,17 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
   }, [api]);
 
   useEffect(() => {
-    const existLike = item.like?.find(
-      (user2) => (user2 as { user: UserType }).user?.id === user.id
-    );
-    if (existLike) {
-      setYouLike(() => true);
-    } else {
-      setYouLike(() => false);
+    if (user?.id) {
+      const existLike = item.like?.find(
+        (user2) => (user2 as { user: UserType }).user?.id === user.id
+      );
+      if (existLike) {
+        setYouLike(() => true);
+      } else {
+        setYouLike(() => false);
+      }
     }
-  }, [item.like, user.id]);
+  }, [item.like, user?.id]);
 
   return (
     <div className="flex flex-col w-full">
@@ -109,10 +111,11 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
       <div className="flex justify-between items-center px-3 py-1">
         <div className="flex gap-3 items-center pt-2">
           <Avatar
-            className={
-              // "size-11 border-1"
-              `${item.hostPostId ? "size-8" : "size-11"}`
-            }>
+            link={item.authorId}
+            className={`${
+              item.hostPostId ? "size-8" : "size-11"
+            } cursor-pointer`}
+          >
             <AvatarImage src={item.author?.profilePicUrl} />
             <AvatarFallback className={`${item.hostPostId && "text-xs"}`}>
               {genAbbration(item.author?.firstName, item.author?.surname)}
@@ -123,7 +126,8 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
             <span
               className={`text-center ${
                 item.hostPostId ? "text-xs font-light" : "text-sm font-medium"
-              }`}>
+              }`}
+            >
               {item.author?.firstName + " " + item.author?.surname}
             </span>
             <span
@@ -131,7 +135,8 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
                 item.hostPostId
                   ? "text-[0.7rem] font-extralight"
                   : "text-xs font-light"
-              }`}>
+              }`}
+            >
               {item.author?.username}
             </span>
           </div>
@@ -150,7 +155,8 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
       <div
         className={`py-2 px-3 text-[1rem] lg:text-[1.2rem] wrap-break-word text-justify ${
           item.hostPostId && "text-[0.8rem]!"
-        }`}>
+        }`}
+      >
         {item.content}
       </div>
       {item.images && item.images.length > 0 && (
@@ -190,7 +196,8 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
               variant={"ghost"}
               className={`flex items-center p-0 h-auto hover:bg-transparent cursor-pointer ${
                 item.hostPostId && "text-[0.6rem]!"
-              }`}>
+              }`}
+            >
               <Heart className={`text-primary ${youlike && "fill-primary"}`} />
               <span className="text-xs">{likeCount}</span>
             </Button>
@@ -198,7 +205,8 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
               <Button
                 onClick={() => setIsOpenComment(true)}
                 variant={"ghost"}
-                className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer">
+                className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer"
+              >
                 <MessageSquareText />
                 <span className="text-xs">{item.commentCount}</span>
               </Button>
@@ -209,7 +217,8 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
             variant={"ghost"}
             className={`flex items-center p-0 h-auto hover:bg-transparent cursor-pointer ${
               item.hostPostId && "text-[0.6rem]!"
-            }`}>
+            }`}
+          >
             <Bookmark />
           </Button>
         </div>
@@ -219,7 +228,8 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
       <Modal
         title="comment sectoion"
         isOpen={isOpenComment}
-        onOpenChange={setIsOpenComment}>
+        onOpenChange={setIsOpenComment}
+      >
         <CommentCard item={item} onClose={setIsOpenComment} isGuest={isGuest} />
       </Modal>
     </div>

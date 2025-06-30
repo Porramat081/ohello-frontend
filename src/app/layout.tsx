@@ -44,8 +44,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           <LoaderProvider>
             <UserProvider>
-              <div className="min-h-svh antialiased relative">
-                <div className="py-2 flex justify-center items-center bg-primary sticky top-0 left-0 w-full z-30">
+              <div className="min-h-svh antialiased relative min-w-[300px]">
+                <div className="py-2 flex justify-between pl-3 sm:pl-0 sm:justify-center items-center bg-primary sticky top-0 left-0 w-full z-30">
                   <Logo />
                   <HeaderBtn />
                 </div>

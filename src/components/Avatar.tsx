@@ -4,20 +4,36 @@ import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Root
-    ref={ref}
-    className={cn(
-      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
-      className
-    )}
-    {...props}
-  />
-));
+  | React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
+  | { link: string; className: string }
+>(({ className, ...props }, ref) => {
+  const router = useRouter();
+  const link = (props as { link: string }).link;
+  return (
+    <AvatarPrimitive.Root
+      ref={ref}
+      onClick={() => {
+        if (link) {
+          router.push("/friend/" + link);
+        }
+      }}
+      className={cn(
+        "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full" +
+          `${
+            link
+              ? " cursor-pointer hover:shadow-lg hover:shadow-ring/30 transition-all duration-300"
+              : ""
+          }`,
+        className
+      )}
+      {...props}
+    />
+  );
+});
 Avatar.displayName = AvatarPrimitive.Root.displayName;
 
 const AvatarImage = React.forwardRef<

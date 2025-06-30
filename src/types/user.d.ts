@@ -1,8 +1,13 @@
 export type UserType = {
   id: string;
   email: string;
-  profilePicUrl?: string;
-  profileCoverUrl?: string;
+  bio?: string;
+  profilePicUrl?: {
+    pictureUrl: string;
+  };
+  profileCoverUrl?: {
+    pictureUrl: string;
+  };
   username?: string;
   firstName: string;
   surname: string;

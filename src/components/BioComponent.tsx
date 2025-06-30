@@ -9,9 +9,10 @@ import { Button } from "./Button";
 
 interface BioComponentProps {
   bio: string;
+  isOther?: boolean;
 }
 
-export default function BioComponent({ bio }: BioComponentProps) {
+export default function BioComponent({ bio, isOther }: BioComponentProps) {
   const [textBio, setTextBio] = useState(bio);
   const prevValue = useRef("");
   const loader = useLoading();
@@ -49,23 +50,35 @@ export default function BioComponent({ bio }: BioComponentProps) {
   };
   return (
     <div className="mt-15 px-4">
-      <h2 className="text-primary font-bold text-sm">Add Bio/About</h2>
+      <h2 className="text-primary font-bold text-sm">
+        {!isOther && <span>Add</span>}
+        Bio/About
+      </h2>
       <div className="relative">
         <Textarea
+          readOnly={isOther}
           onChange={handleTextChange}
           value={textBio || ""}
           className="px-4 py-1 resize-none bg-foreground/10 my-3 h-20 font-[500] text-sm tracking-wide"
         />
-        <span className="absolute bottom-[-1.1rem] left-0 text-xs font-semibold">
-          {textBio?.length || 0} / 500
-        </span>
+        {!isOther && (
+          <span className="absolute bottom-[-1.1rem] left-0 text-xs font-semibold">
+            {textBio?.length || 0} / 500
+          </span>
+        )}
       </div>
-      <div className="mt-3 flex justify-end">
-        <Button onClick={handleSave} className="cursor-pointer dark:text-white">
-          <SaveIcon size={16} />
-          Save
-        </Button>
-      </div>
+
+      {!isOther && (
+        <div className="mt-3 flex justify-end">
+          <Button
+            onClick={handleSave}
+            className="cursor-pointer dark:text-white"
+          >
+            <SaveIcon size={16} />
+            Save
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

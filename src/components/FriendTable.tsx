@@ -11,8 +11,11 @@ const ListItem = ({ item, cat }: any) => {
   return (
     <div className="border-b-1 py-2 px-2 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <Avatar className="border-2 border-primary">
-          <AvatarImage src={item.profilePicUrl} />
+        <Avatar
+          link={item.friendId || item.id}
+          className="border-2 border-primary"
+        >
+          <AvatarImage src={item.profilePicUrl?.pictureUrl} />
           <AvatarFallback>
             {genAbbration(item.firstName, item.surname)}
           </AvatarFallback>

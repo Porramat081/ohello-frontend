@@ -10,7 +10,7 @@ import { useLoading } from "@/providers/LoaderProvider";
 
 interface ProfileCoverProps {
   user: UserType;
-  fetchUser: () => Promise<{}>;
+  fetchUser?: () => Promise<{}>;
 }
 
 export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
@@ -20,12 +20,18 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
   const loader = useLoading();
 
   const triggerFileInput = () => {
+    if (!fetchUser) {
+      return;
+    }
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
   const triggerFileInput2 = () => {
+    if (!fetchUser) {
+      return;
+    }
     if (fileInputRef2.current) {
       fileInputRef2.current.click();
     }
@@ -44,7 +50,7 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
           const newFormData = new FormData();
           newFormData.append(type, file);
           const res = await updateUser(newFormData);
-          if (res.success) {
+          if (res.success && fetchUser) {
             await fetchUser();
           }
         }
@@ -65,12 +71,16 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
     }
   };
 
+  if (!user) {
+    return;
+  }
+
   return (
     <div className="bg-secondary relative h-[200px] w-auto">
       <div>
-        {user.profileCoverUrl ? (
+        {user?.profileCoverUrl ? (
           <Image
-            src={user.profileCoverUrl}
+            src={user.profileCoverUrl?.pictureUrl || ""}
             alt="profile-cover"
             fill
             sizes="200"
@@ -89,16 +99,18 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
           ref={fileInputRef}
           onChange={(event) => handleFileChange(event, "profileCoverUrl")}
         />
-        <button
-          className="flex flex-col items-center justify-center hover:text-primary cursor-pointer"
-          type="button"
-          onClick={triggerFileInput}
-        >
-          <Camera size={20} />
-          <span className="text-xs font-semibold">
-            {user.profileCoverUrl ? "Edit Photo" : "Add Photo"}
-          </span>
-        </button>
+        {fetchUser && (
+          <button
+            className="flex flex-col items-center justify-center hover:text-primary cursor-pointer"
+            type="button"
+            onClick={triggerFileInput}
+          >
+            <Camera size={20} />
+            <span className="text-xs font-semibold">
+              {user?.profileCoverUrl ? "Edit Photo" : "Add Photo"}
+            </span>
+          </button>
+        )}
       </div>
 
       {/* Profile Header */}
@@ -113,11 +125,13 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
           />
           <Avatar
             onClick={triggerFileInput2}
-            className="size-15 border-2 border-primary cursor-pointer"
+            className={`size-15 border-2 border-primary ${
+              fetchUser && "cursor-pointer"
+            }`}
           >
-            <AvatarImage src={user.profilePicUrl}></AvatarImage>
+            <AvatarImage src={user?.profilePicUrl?.pictureUrl}></AvatarImage>
             <AvatarFallback>
-              {genAbbration(user.firstName, user.surname)}
+              {genAbbration(user?.firstName, user?.surname)}
             </AvatarFallback>
           </Avatar>
 
@@ -127,11 +141,11 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
                 className="text-primary dark:text-white font-extrabold"
                 // style={{ WebkitTextStroke: "0.1px white" }}
               >
-                {user.firstName + " " + user.surname}
+                {user?.firstName + " " + user?.surname}
               </span>
             </div>
             <div className="text-xs font-semibold text-foreground">
-              {user.username && "@" + user.username}
+              {user?.username && "@" + user?.username}
             </div>
           </div>
         </div>
