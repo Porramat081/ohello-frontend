@@ -4,10 +4,10 @@ import { getFriends } from "@/apis/friend";
 import { useEffect, useState } from "react";
 import { useLoading } from "@/providers/LoaderProvider";
 import { FriendCatObjType } from "@/types/user";
-import { genAbbration } from "@/lib/utils";
+import { formatMonthYear, genAbbration } from "@/lib/utils";
 import FriendActiveBtn from "./FriendActiveBtn";
 
-const ListItem = ({ item, cat }: any) => {
+const ListItem = ({ item, cat, fetchListFriend }: any) => {
   return (
     <div className="border-b-1 py-2 px-2 flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -26,12 +26,16 @@ const ListItem = ({ item, cat }: any) => {
         </div>
       </div>
 
-      <div>
-        <span className="text-xs text-foreground font-semibold"></span>
+      <div className="text-[0.7rem]">
+        {formatMonthYear(item.updatedAt || item.friend?.updatedAt, true)}
       </div>
 
       <div>
-        <FriendActiveBtn item={item} cat={cat} />
+        <FriendActiveBtn
+          item={item}
+          cat={cat}
+          fetchNewFriend={fetchListFriend}
+        />
       </div>
     </div>
   );
@@ -94,7 +98,7 @@ export default function FriendTable({
     } else if (cat === "Block") {
       setShowList(listFriend.yourBlock);
     }
-  }, [cat]);
+  }, [cat, listFriend]);
 
   return (
     <div className="col-span-3 pt-2 border-l-1">
@@ -102,7 +106,12 @@ export default function FriendTable({
       <div className="">
         {showList?.length > 0 &&
           showList.map((item, index) => (
-            <ListItem key={index} item={item} cat={cat} />
+            <ListItem
+              key={index}
+              item={item}
+              cat={cat}
+              fetchListFriend={fetchListFriend}
+            />
           ))}
       </div>
     </div>

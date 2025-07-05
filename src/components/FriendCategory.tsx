@@ -22,7 +22,7 @@ export default function FriendCategory(props: FriendCategoryProps) {
           key={index}
           onClick={() => handleClick(item)}
           variant={item !== props.cat ? "outline" : "secondary"}
-          className="cursor-pointer rounded-none flex flex-col py-6 gap-0 items-start border-b-1 w-full"
+          className="cursor-pointer rounded-none flex flex-col py-6 gap-0 items-start border-0 w-full"
         >
           <h3 className="text-[0.7rem] font-semibold text-primary">{item}</h3>
           <div className="text-[0.6rem] font-semibold text-muted-foreground">

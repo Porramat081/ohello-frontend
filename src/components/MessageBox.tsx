@@ -82,8 +82,7 @@ export default function MessageBox(props: MessageBoxProps) {
     };
     //connection closed
     socketRef.current.onclose = () => {
-      props.handleChangeRoom("");
-      setRoomId("");
+      //setRoomId("");
       console.log("WebSocket connection closed");
     };
     //connection error
@@ -115,7 +114,13 @@ export default function MessageBox(props: MessageBoxProps) {
     }
     const dateNow = new Date().toString();
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ message, createdAt: dateNow }));
+      socketRef.current.send(
+        JSON.stringify({
+          message,
+          createdAt: dateNow,
+          notifyRoom: props.targetId,
+        })
+      );
     }
     setRecievedMessages((prev) => [
       ...prev,

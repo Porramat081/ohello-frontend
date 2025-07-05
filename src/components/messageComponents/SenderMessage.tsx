@@ -39,7 +39,7 @@ export default function SenderMessage(props: SenderMessageProps) {
                 new Date(props.createdAt)
               )}
           </div>
-          {!props.isReceived && <div>{props.status}</div>}
+          {/* {!props.isReceived && <div>{props.status}</div>} */}
         </div>
       </div>
     </div>

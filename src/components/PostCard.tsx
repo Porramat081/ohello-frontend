@@ -116,7 +116,7 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
               item.hostPostId ? "size-8" : "size-11"
             } cursor-pointer`}
           >
-            <AvatarImage src={item.author?.profilePicUrl} />
+            <AvatarImage src={item.author?.profilePicUrl?.pictureUrl} />
             <AvatarFallback className={`${item.hostPostId && "text-xs"}`}>
               {genAbbration(item.author?.firstName, item.author?.surname)}
             </AvatarFallback>
@@ -189,39 +189,47 @@ export default function PostCard({ item, isGuest }: PostCardProps) {
       )}
       {/* PostCard Footer */}
       <div className="mt-4 mb-3">
-        <div className="flex items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={handleLike}
-              variant={"ghost"}
-              className={`flex items-center p-0 h-auto hover:bg-transparent cursor-pointer ${
-                item.hostPostId && "text-[0.6rem]!"
-              }`}
-            >
-              <Heart className={`text-primary ${youlike && "fill-primary"}`} />
-              <span className="text-xs">{likeCount}</span>
-            </Button>
-            {!item.hostPostId && (
+        {item.status === "Draft" ? (
+          <div className="text-center">{item.status}</div>
+        ) : (
+          <div className="flex items-center justify-between px-6">
+            <div className="flex items-center gap-3">
               <Button
-                onClick={() => setIsOpenComment(true)}
+                onClick={handleLike}
                 variant={"ghost"}
-                className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer"
+                className={`flex items-center p-0 h-auto hover:bg-transparent cursor-pointer ${
+                  item.hostPostId && "text-[0.6rem]!"
+                }`}
               >
-                <MessageSquareText />
-                <span className="text-xs">{item.commentCount}</span>
+                <Heart
+                  className={`text-primary ${youlike && "fill-primary"}`}
+                />
+                <span className="text-xs">{likeCount}</span>
+              </Button>
+              {!item.hostPostId && item.status !== "Private" && (
+                <Button
+                  onClick={() => setIsOpenComment(true)}
+                  variant={"ghost"}
+                  className="flex items-center p-0 h-auto hover:bg-transparent cursor-pointer"
+                >
+                  <MessageSquareText />
+                  <span className="text-xs">{item.commentCount}</span>
+                </Button>
+              )}
+            </div>
+
+            {item.status === "Public" && (
+              <Button
+                variant={"ghost"}
+                className={`flex items-center p-0 h-auto hover:bg-transparent cursor-pointer ${
+                  item.hostPostId && "text-[0.6rem]!"
+                }`}
+              >
+                <Bookmark />
               </Button>
             )}
           </div>
-
-          <Button
-            variant={"ghost"}
-            className={`flex items-center p-0 h-auto hover:bg-transparent cursor-pointer ${
-              item.hostPostId && "text-[0.6rem]!"
-            }`}
-          >
-            <Bookmark />
-          </Button>
-        </div>
+        )}
       </div>
       <Separator />
 

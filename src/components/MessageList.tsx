@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
 import { Carousel, CarouselContent, CarouselItem } from "./CardCarousel";
 import { Input } from "./Input";
@@ -11,11 +10,6 @@ interface MessageListProps {
 }
 
 export default function MessageList(props: MessageListProps) {
-  useEffect(() => {
-    if (props.roomList.length > 0) {
-      props.handleChangeRoom(props.roomList[0]?.id);
-    }
-  }, [props.roomList]);
   return (
     <div className="flex flex-col lg:border-r-1">
       <div className="my-2 px-2">
@@ -24,11 +18,9 @@ export default function MessageList(props: MessageListProps) {
       <Carousel className="mt-2 px-[1px] pl-2" opts={{ align: "center" }}>
         <CarouselContent className="w-[60px]">
           {props.roomList.map((item, index) => (
-            <CarouselItem
-              key={index}
-              onClick={() => props.handleChangeRoom(item.id)}
-            >
+            <CarouselItem key={index}>
               <Avatar
+                onClick={() => props.handleChangeRoom(item.id)}
                 className={`${
                   props.targetId === item.id ? "border-2 border-primary" : ""
                 } cursor-pointer`}

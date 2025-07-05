@@ -10,9 +10,14 @@ import { Button } from "./Button";
 interface BioComponentProps {
   bio: string;
   isOther?: boolean;
+  fetchUser?: () => Promise<{}>;
 }
 
-export default function BioComponent({ bio, isOther }: BioComponentProps) {
+export default function BioComponent({
+  bio,
+  isOther,
+  fetchUser,
+}: BioComponentProps) {
   const [textBio, setTextBio] = useState(bio);
   const prevValue = useRef("");
   const loader = useLoading();
@@ -38,8 +43,9 @@ export default function BioComponent({ bio, isOther }: BioComponentProps) {
       loader?.setLoading(true);
       if (textBio.trim()) {
         const res = await updateUser({ bio: textBio });
-        if (res.success) {
+        if (res.success && fetchUser) {
           toast.success(res.message);
+          await fetchUser();
         }
       }
     } catch (error) {

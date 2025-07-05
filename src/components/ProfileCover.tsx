@@ -78,9 +78,9 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
   return (
     <div className="bg-secondary relative h-[200px] w-auto">
       <div>
-        {user?.profileCoverUrl ? (
+        {user?.profileCoverUrl?.pictureUrl ? (
           <Image
-            src={user.profileCoverUrl?.pictureUrl || ""}
+            src={user.profileCoverUrl?.pictureUrl}
             alt="profile-cover"
             fill
             sizes="200"
@@ -107,7 +107,7 @@ export default function ProfileCover({ user, fetchUser }: ProfileCoverProps) {
           >
             <Camera size={20} />
             <span className="text-xs font-semibold">
-              {user?.profileCoverUrl ? "Edit Photo" : "Add Photo"}
+              {user?.profileCoverUrl?.pictureUrl ? "Edit Photo" : "Add Photo"}
             </span>
           </button>
         )}

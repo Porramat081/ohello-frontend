@@ -9,3 +9,8 @@ export const getChatByRoomId = async (targetId: string) => {
   const result = await axiosInstance.get("/api/message/getChat/" + targetId);
   return result.data;
 };
+
+export const getLastMessages = async () => {
+  const result = await axiosInstance.get("/api/message/lastMessages");
+  return result.data;
+};

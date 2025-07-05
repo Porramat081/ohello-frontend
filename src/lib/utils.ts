@@ -92,7 +92,7 @@ export function formatDateWithAmPm(
 
   const hourString = String(hours).padStart(2, "0");
   //const finalString = `${day}/${month}/${year} ${hourString}:${minutes} ${ampm}`;
-  const finalString = `${hourString}:${minutes} ${ampm}\n${day} ${month} ${year}`;
+  const finalString = `${hourString}:${minutes} ${ampm}\n${day}/${month}/${year}`;
 
   if (createdDate < updatedDate) {
     return "updated " + finalString;
@@ -104,10 +104,10 @@ export function formatDateWithAmPm(
 export function formatMonthYear(createdAt: Date | undefined, inDate?: boolean) {
   if (!createdAt) return;
   const date = new Date(createdAt);
-  const formatted = date.toLocaleString("en-GB", {
+
+  return date.toLocaleDateString("en-GB", {
     day: inDate ? "2-digit" : undefined,
     month: "long",
     year: "numeric",
   });
-  return formatted;
 }

@@ -16,9 +16,16 @@ export default function ProfilePage() {
   return (
     <div>
       {/* Profile Cover */}
-      <ProfileCover user={user} fetchUser={fetchUser} />
+      <ProfileCover
+        user={{
+          ...user,
+          profilePicUrl: { pictureUrl: user.profilePicUrl },
+          profileCoverUrl: { pictureUrl: user.profileCoverUrl },
+        }}
+        fetchUser={fetchUser}
+      />
       {/* Bio */}
-      <BioComponent bio={user.bio} />
+      <BioComponent bio={user.bio} fetchUser={fetchUser} />
       <Separator className="my-5" />
       <ProfileForm user={user} />
     </div>

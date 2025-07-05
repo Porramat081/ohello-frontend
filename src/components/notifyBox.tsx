@@ -1,32 +1,33 @@
+import { errorAxios } from "@/lib/errorHandle";
 import { Input } from "./Input";
 import NotifyMessageItem from "./notify-message-item";
-
-const mockChat = [
-  {
-    sender: "johndoe@gamil.com",
-    message: [
-      {
-        sendAt: new Date(),
-        readAt: new Date(),
-        isRead: false,
-        content: "Hellohuohiuhiuhuihuihuihuihiuhnliu",
-      },
-    ],
-  },
-  {
-    sender: "johndoe@gamil.com",
-    message: [
-      {
-        sendAt: new Date(),
-        readAt: new Date(),
-        isRead: false,
-        content: "Hellohuohiuhiuhuihuihuihuihiuhnliu",
-      },
-    ],
-  },
-];
+import { useLoading } from "@/providers/LoaderProvider";
+import { useUser } from "@/providers/UserProvider";
+import { useEffect, useState } from "react";
+import { getLastMessages } from "@/apis/message";
 
 export default function NotifyBox() {
+  const loader = useLoading();
+  const { user } = useUser();
+  const [lastMessages, setLastMessages] = useState([]);
+  const fetchLastMessage = async () => {
+    try {
+      loader?.setLoading(true);
+      const res = await getLastMessages();
+      if (res.success) {
+        setLastMessages(res.lastMessages);
+      } else {
+        setLastMessages([]);
+      }
+    } catch (error) {
+      errorAxios(error);
+    } finally {
+      loader?.setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchLastMessage();
+  }, [user]);
   return (
     <div className="w-full">
       {/* search chat */}
@@ -35,12 +36,8 @@ export default function NotifyBox() {
 
       {/* notify chat */}
       <div className="py-2 flex flex-col gap-2">
-        {mockChat.map((item, index) => (
-          <NotifyMessageItem
-            key={index}
-            sender={item.sender}
-            message={item.message}
-          />
+        {lastMessages.map((item, index) => (
+          <NotifyMessageItem key={index} item={item} />
         ))}
       </div>
       {/* notify event */}

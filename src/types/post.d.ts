@@ -23,7 +23,9 @@ export type PostType = {
   author: {
     firstName: string;
     surname: string;
-    profilePicUrl: string;
+    profilePicUrl: {
+      pictureUrl: string;
+    };
     username: string;
   };
   authorId: string;
@@ -35,6 +37,7 @@ export type PostType = {
   like: [];
   images?: PostImage[];
   hostPostId?: string;
+  status: PostStatus;
 };
 
 export type PostStatus = "Private" | "Public" | "Draft" | "FriendOnly";

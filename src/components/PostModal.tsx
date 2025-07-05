@@ -42,6 +42,8 @@ export default function PostModal({
       formData.append("deleted-image-ids", JSON.stringify(deletedImageIds));
     }
 
+    formData.append("status", postStatus);
+
     const result = formAction(formData);
 
     return result;
@@ -104,7 +106,8 @@ export default function PostModal({
         <Button
           variant={"outline"}
           className="flex-1 cursor-pointer"
-          type="reset">
+          type="reset"
+        >
           <Eraser />
           clear
         </Button>

@@ -8,16 +8,20 @@ import { useAuthorize } from "@/hooks/useForm";
 import { errorAxios } from "@/lib/errorHandle";
 import { useLoading } from "@/providers/LoaderProvider";
 import { useUser } from "@/providers/UserProvider";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function MessagePage() {
   const [targetId, setTargetId] = useState<string>("");
 
-  const [roomList, setRoomList] = useState([]);
+  const [roomList, setRoomList] = useState<any[]>([]);
 
   const { user } = useUser();
   const loader = useLoading();
   const { changeRoute } = useAuthorize();
+  const searchParams = useSearchParams();
+  const firstNameParam = searchParams.get("f");
+  const surnameParam = searchParams.get("s");
 
   const fetchRoomChat = async () => {
     try {
@@ -40,6 +44,22 @@ export default function MessagePage() {
       fetchRoomChat();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (roomList.length) {
+      if (firstNameParam && surnameParam) {
+        const targetUser = roomList.find(
+          (item) =>
+            item.firstName === firstNameParam && item.surname === surnameParam
+        );
+        if (targetUser) {
+          handleChangeRoom(targetUser.id);
+        }
+      } else {
+        handleChangeRoom(roomList[0].id);
+      }
+    }
+  }, [roomList, firstNameParam, surnameParam]);
 
   if (!user || (!user.id && user.status !== "Active")) {
     return;

@@ -1,4 +1,5 @@
 import axiosInstance, { axiosInstance2 } from "@/lib/axios";
+import { PostStatus } from "@/types/post";
 // import { PostImage } from "@/types/post";
 
 interface PostObjInput {
@@ -12,8 +13,8 @@ export const createNewPost = async (postObj: PostObjInput) => {
   return result.data;
 };
 
-export const getFeedPost = async () => {
-  const result = await axiosInstance.get("/api/post/getFeedPosts");
+export const getFeedPost = async (typePost: PostStatus) => {
+  const result = await axiosInstance.get("/api/post/getFeedPosts/" + typePost);
   return result.data;
 };
 
@@ -32,5 +33,10 @@ export const getComment = async (postId: string) => {
 
 export const likeUnlikePost = async (postId: string) => {
   const result = await axiosInstance.post("/api/post/likePost", { postId });
+  return result.data;
+};
+
+export const getUserPost = async () => {
+  const result = await axiosInstance.get("/api/post/getUserPosts");
   return result.data;
 };

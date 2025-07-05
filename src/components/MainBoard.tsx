@@ -1,7 +1,5 @@
 "use client";
 
-import { SlidersHorizontal } from "lucide-react";
-import { Button } from "./Button";
 import { Carousel, CarouselContent, CarouselItem } from "./CardCarousel";
 import { Separator } from "./Separator";
 import StoryCard from "./StoryCard";
@@ -13,7 +11,8 @@ import { useUser } from "@/providers/UserProvider";
 import { errorAxios } from "@/lib/errorHandle";
 import { getFeedPost } from "@/apis/post";
 import { useLoading } from "@/providers/LoaderProvider";
-import PostModal from "./PostModal";
+import { PostStatus } from "@/types/post";
+import PostStatusTab from "./PostStatusTab";
 
 const mockStory = [
   {
@@ -50,7 +49,10 @@ const mockStory = [
 
 export default function Mainboard() {
   const [openStory, setOpenStory] = useState(false);
-  const { user, activePost, setActivePost } = useUser();
+  const [feedStatus, setFeedStatus] = useState<PostStatus>("Public");
+
+  const { user, refreshPost, setRefreshPost } = useUser();
+
   const loader = useLoading();
 
   const [feedPosts, setFeedPosts] = useState<any[]>([]);
@@ -58,9 +60,11 @@ export default function Mainboard() {
   const fetchFeedPosts = async () => {
     try {
       loader?.setLoading(true);
-      const res = await getFeedPost();
+      const res = await getFeedPost(feedStatus || "Public");
       if (res.success && res.posts?.length > 0) {
         setFeedPosts(() => [...res.posts]);
+      } else {
+        setFeedPosts(() => []);
       }
     } catch (error) {
       errorAxios(error);
@@ -71,7 +75,14 @@ export default function Mainboard() {
 
   useEffect(() => {
     fetchFeedPosts();
-  }, [user]);
+  }, [user, feedStatus]);
+
+  useEffect(() => {
+    if (refreshPost) {
+      fetchFeedPosts();
+    }
+    setRefreshPost(false);
+  }, [refreshPost]);
 
   return (
     <div>
@@ -97,27 +108,27 @@ export default function Mainboard() {
 
       {/* Feed tab */}
       <div className="mt-4 relative">
-        <div className="flex sticky top-[0.03rem] z-10 items-center justify-between p-2 bg-background">
-          <h3 className="font-medium text-sm">All</h3>
-          {user && (
-            <Button
-              variant={"ghost"}
-              className="h-auto p-0 cursor-pointer hover:bg-transparent"
-            >
-              <SlidersHorizontal size={24} />
-            </Button>
-          )}
+        <div className="sticky top-[0.03rem] z-10">
+          <PostStatusTab
+            isMain={true}
+            value={feedStatus}
+            setValue={setFeedStatus}
+          />
         </div>
         <Separator />
 
         <div className="flex flex-col gap-2">
-          {feedPosts.map((item, index) => (
-            <PostCard
-              key={index}
-              item={item}
-              isGuest={!user || user.id !== item.authorId}
-            />
-          ))}
+          {feedPosts.length > 0 ? (
+            feedPosts.map((item, index) => (
+              <PostCard
+                key={index}
+                item={item}
+                isGuest={!user || user.id !== item.authorId}
+              />
+            ))
+          ) : (
+            <div className="mt-4 text-center py-2">There's no post here</div>
+          )}
         </div>
       </div>
 
@@ -130,7 +141,7 @@ export default function Mainboard() {
         <StoryModal />
       </Modal>
 
-      <Modal
+      {/* <Modal
         title="Post Something"
         isOpen={!!activePost as boolean}
         onOpenChange={setActivePost}
@@ -140,7 +151,7 @@ export default function Mainboard() {
           existingPost={activePost?.id && activePost}
           closeModal={() => setActivePost(false)}
         />
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

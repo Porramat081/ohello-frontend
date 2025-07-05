@@ -1,7 +1,9 @@
 "use client";
 
 import MenuUser from "@/components/MenuUser";
+import Modal from "@/components/Modal";
 import NotifyBox from "@/components/notifyBox";
+import PostModal from "@/components/PostModal";
 import { useUser } from "@/providers/UserProvider";
 import { useEffect } from "react";
 
@@ -10,7 +12,8 @@ export default function MainLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, fetchUser } = useUser();
+  const { user, fetchUser, activePost, setActivePost, setRefreshPost } =
+    useUser();
 
   useEffect(() => {
     fetchUser();
@@ -39,6 +42,18 @@ export default function MainLayout({
       >
         {user && user.status === "Active" && <NotifyBox />}
       </div>
+
+      <Modal
+        title="Post Something"
+        isOpen={!!activePost as boolean}
+        onOpenChange={setActivePost}
+      >
+        <PostModal
+          fetchNewPost={() => setRefreshPost(true)}
+          existingPost={activePost?.id && activePost}
+          closeModal={() => setActivePost(false)}
+        />
+      </Modal>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/providers/UserProvider";
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -12,13 +13,19 @@ const Avatar = React.forwardRef<
   | { link: string; className: string }
 >(({ className, ...props }, ref) => {
   const router = useRouter();
+  const { user } = useUser();
   const link = (props as { link: string }).link;
   return (
     <AvatarPrimitive.Root
       ref={ref}
       onClick={() => {
         if (link) {
-          router.push("/friend/" + link);
+          if (link === user.id) {
+            router.push("/profile");
+            return;
+          } else {
+            router.push("/friend/" + link);
+          }
         }
       }}
       className={cn(

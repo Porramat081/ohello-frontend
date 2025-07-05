@@ -21,6 +21,7 @@ type ActivePostType = true | false | PostType;
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | {} | null>({});
   const [activePost, setActivePost] = useState<ActivePostType>(false);
+  const [refreshPost, setRefreshPost] = useState(false);
 
   const router = useRouter();
   const loader = useLoading();
@@ -58,7 +59,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, clearUser, fetchUser, activePost, setActivePost }}
+      value={{
+        user,
+        setUser,
+        clearUser,
+        fetchUser,
+        activePost,
+        setActivePost,
+        refreshPost,
+        setRefreshPost,
+      }}
     >
       {children}
     </UserContext.Provider>

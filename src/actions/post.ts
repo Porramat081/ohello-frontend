@@ -5,6 +5,7 @@ import {
   genErrorResponse,
 } from "@/lib/utils";
 import { InitialFormState } from "@/types/action";
+import { PostStatus } from "@/types/post";
 
 export const createNewPostAction = async (
   _prevState: InitialFormState,
@@ -15,6 +16,7 @@ export const createNewPostAction = async (
     content: formData.get("content") as string,
     images: formData.getAll("images") as File[],
     hostPostId: (formData.get("host-post-id") as string) || undefined,
+    status: formData.get("status") as PostStatus,
   };
 
   const deletedImageIds = formData.get("deleted-image-ids") as string;
@@ -25,6 +27,7 @@ export const createNewPostAction = async (
         images: File[];
         deletedImageIds: string;
         hostPostId: string | undefined;
+        status: PostStatus;
       }
     ).deletedImageIds = deletedImageIds;
   }
