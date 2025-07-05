@@ -19,7 +19,9 @@ export default function MessageBox(props: MessageBoxProps) {
   const [message, setMessage] = useState("");
   const [targetUser, setTargetUser] = useState<any>(null);
   const [recievedMessages, setRecievedMessages] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
   const socketRef = useRef<WebSocket | null>(null);
+  const notifyRef = useRef<WebSocket | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -31,12 +33,14 @@ export default function MessageBox(props: MessageBoxProps) {
     try {
       loader?.setLoading(true);
       if (props.targetId) {
-        const chats = await getChatByRoomId(props.targetId);
+        const chats = await getChatByRoomId(props.targetId, page);
         if (chats.id) {
           setRoomId(chats.id);
         }
         if (chats.message?.length) {
-          setRecievedMessages([...chats.message]);
+          setRecievedMessages((prev) => [...chats.message]);
+        } else {
+          setRecievedMessages((prev) => []);
         }
         if (chats.targetUser) {
           setTargetUser(chats.targetUser);
@@ -59,6 +63,14 @@ export default function MessageBox(props: MessageBoxProps) {
     socketRef.current = new WebSocket(
       (process.env.NEXT_PUBLIC_WEB_SOCKET || "") + "/wsMessage/" + `${roomId}`
     );
+
+    //notify connection
+    notifyRef.current = new WebSocket(
+      (process.env.NEXT_PUBLIC_WEB_SOCKET || "") +
+        "/notify/" +
+        `${props.targetId}`
+    );
+
     //ws open
     socketRef.current.onopen = async () => {
       console.log("ws connection open");
@@ -95,8 +107,29 @@ export default function MessageBox(props: MessageBoxProps) {
       if (socketRef.current) {
         socketRef.current.close();
       }
+      if (notifyRef.current) {
+        notifyRef.current.close();
+      }
     };
   }, [roomId, props.targetId]);
+
+  // useEffect(() => {
+  //   const container = containerRef.current;
+  //   const handleScroll = () => {
+  //     if (!container) return;
+  //     if (container.scrollTop === 0) {
+  //       setPage((prev) => prev + 1);
+  //       fetchChat();
+  //     }
+  //   };
+  //   if (container) {
+  //     container.addEventListener("scroll", handleScroll);
+  //   }
+
+  //   return () => {
+  //     container?.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, [fetchChat]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -121,6 +154,9 @@ export default function MessageBox(props: MessageBoxProps) {
           notifyRoom: props.targetId,
         })
       );
+    }
+    if (notifyRef.current && notifyRef.current.readyState === WebSocket.OPEN) {
+      notifyRef.current.send(JSON.stringify({ roomId: roomId }));
     }
     setRecievedMessages((prev) => [
       ...prev,
@@ -172,7 +208,11 @@ export default function MessageBox(props: MessageBoxProps) {
         >
           {recievedMessages.length ? (
             <DateHeader
-              messageArr={recievedMessages}
+              messageArr={recievedMessages.sort(
+                (item1, item2) =>
+                  new Date(item1.createdAt).getTime() -
+                  new Date(item2.createdAt).getTime()
+              )}
               targetId={props.targetId}
             />
           ) : (

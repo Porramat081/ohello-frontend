@@ -10,12 +10,14 @@ function groupByDay(arr: any[]) {
   const groups = new Map();
 
   for (const item of arr) {
-    const key = item.day;
+    const key = formatMonthYear(item.createdAt, true);
     if (!groups.has(key)) {
       groups.set(key, []);
     }
     groups.get(key).push(item);
   }
+
+  console.log(Array.from(groups.values()));
 
   return Array.from(groups.values());
 }

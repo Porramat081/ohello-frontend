@@ -15,8 +15,15 @@ export default function NotifyMessageItem({ item }: NotifyMessageItemProps) {
         </AvatarFallback>
       </Avatar>
 
-      <div className="text-xs truncate">
-        <span>{item.user?.firstName + " " + item.user?.surname}</span>
+      <div className="text-xs truncate w-full">
+        <div className="flex justify-between gap-2 items-center pr-1">
+          <span className="custom-ellipsis inline-block">
+            {item.user?.firstName + " " + item.user?.surname}
+          </span>
+          {!item.lastStatus && (
+            <div className="bg-primary size-2 rounded-full"></div>
+          )}
+        </div>
         <div className="truncate">{item.Message?.content}</div>
       </div>
     </div>

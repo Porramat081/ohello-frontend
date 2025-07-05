@@ -5,8 +5,10 @@ export const getChatRoom = async () => {
   return result.data;
 };
 
-export const getChatByRoomId = async (targetId: string) => {
-  const result = await axiosInstance.get("/api/message/getChat/" + targetId);
+export const getChatByRoomId = async (targetId: string, page: number) => {
+  const result = await axiosInstance.get(
+    "/api/message/getChat/" + targetId + "/" + page
+  );
   return result.data;
 };
 

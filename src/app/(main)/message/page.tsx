@@ -28,6 +28,7 @@ export default function MessagePage() {
       loader?.setLoading(true);
       const res = await getChatRoom();
       if (res.success) {
+        console.log(res.chatRooms);
         setRoomList(res.chatRooms);
       }
     } catch (error) {
