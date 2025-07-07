@@ -9,7 +9,7 @@ import { errorAxios } from "@/lib/errorHandle";
 import { useLoading } from "@/providers/LoaderProvider";
 import { useUser } from "@/providers/UserProvider";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState,Suspense } from "react";
 
 export default function MessagePage() {
   const [targetId, setTargetId] = useState<string>("");
@@ -68,6 +68,7 @@ export default function MessagePage() {
     setTargetId(rid);
   };
   return (
+    <Suspense>
     <div className="pt-2">
       <h2 className="text-sm font-bold text-primary px-2">Messages</h2>
       <div className="flex flex-col">
@@ -84,5 +85,6 @@ export default function MessagePage() {
         />
       </div>
     </div>
+      </Suspense>
   );
 }
