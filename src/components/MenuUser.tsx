@@ -29,7 +29,7 @@ export default function MenuUser({ user }: MenuUserProps) {
     <div className="flex items-start flex-col gap-5">
       <div className="pt-2 px-2 mb-3">
         <Avatar className="border border-foreground size-13">
-          <AvatarImage src={user?.profilePicUrl} />
+          <AvatarImage src={user?.profilePicUrl?.pictureUrl} />
           <AvatarFallback className="text-2xl font-semibold">
             {genAbbration(user?.firstName, user?.surname)}
           </AvatarFallback>
