@@ -5,7 +5,7 @@ import Modal from "@/components/Modal";
 import NotifyBox from "@/components/notifyBox";
 import PostModal from "@/components/PostModal";
 import { useUser } from "@/providers/UserProvider";
-import { useEffect } from "react";
+import { useEffect , Suspense  } from "react";
 
 export default function MainLayout({
   children,
@@ -35,7 +35,9 @@ export default function MainLayout({
             : "col-span-6 col-start-2 border-l border-r"
         } h-screen overflow-auto hide-scrollbar`}
       >
+        <Suspense>
         {children}
+        </Suspense>
       </div>
       <div
         className={`hidden sm:flex justify-center border-l pt-3 px-2 col-span-2 lg:col-span-2`}
