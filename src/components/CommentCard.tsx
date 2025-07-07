@@ -97,7 +97,7 @@ export default function CommentCard({
         <div className="flex justify-between items-center px-3 py-1">
           <div className="flex gap-3 items-center pt-2">
             <Avatar className="size-11 border-1">
-              <AvatarImage src={item.author?.profilePicUrl} />
+              <AvatarImage src={item.author?.profilePicUrl?.pictureUrl} />
               <AvatarFallback>
                 {genAbbration(item.author?.firstName, item.author?.surname)}
               </AvatarFallback>
