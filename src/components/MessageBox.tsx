@@ -54,82 +54,8 @@ export default function MessageBox(props: MessageBoxProps) {
   };
 
   useEffect(() => {
-    if (!props.targetId) return;
-
     fetchChat();
-
-    if (!roomId) return;
-    //ws connection
-    socketRef.current = new WebSocket(
-      (process.env.NEXT_PUBLIC_WEB_SOCKET || "") + "/wsMessage/" + `${roomId}`
-    );
-
-    //notify connection
-    notifyRef.current = new WebSocket(
-      (process.env.NEXT_PUBLIC_WEB_SOCKET || "") +
-        "/notify/" +
-        `${props.targetId}`
-    );
-
-    //ws open
-    socketRef.current.onopen = async () => {
-      console.log("ws connection open");
-    };
-    //listen message
-    socketRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      // if (data.read === "reading") {
-      //   alert("reading");
-      // }
-
-      setRecievedMessages((prev) => [
-        ...prev,
-        {
-          isReceived: data.writerId !== props.userId,
-          content: data.message as string,
-          createdAt: data.createdAt as string,
-        },
-      ]);
-    };
-    //connection closed
-    socketRef.current.onclose = () => {
-      //setRoomId("");
-      console.log("WebSocket connection closed");
-    };
-    //connection error
-    socketRef.current.onerror = (error) => {
-      props.handleChangeRoom("");
-      setRoomId("");
-      console.log("WebSocket error : ", error);
-    };
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.close();
-      }
-      if (notifyRef.current) {
-        notifyRef.current.close();
-      }
-    };
-  }, [roomId, props.targetId]);
-
-  // useEffect(() => {
-  //   const container = containerRef.current;
-  //   const handleScroll = () => {
-  //     if (!container) return;
-  //     if (container.scrollTop === 0) {
-  //       setPage((prev) => prev + 1);
-  //       fetchChat();
-  //     }
-  //   };
-  //   if (container) {
-  //     container.addEventListener("scroll", handleScroll);
-  //   }
-
-  //   return () => {
-  //     container?.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, [fetchChat]);
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -164,6 +90,7 @@ export default function MessageBox(props: MessageBoxProps) {
     ]);
     setMessage(() => "");
   };
+
   if (!roomId || !targetUser) {
     return <div>Please Select Chat To Start</div>;
   }

@@ -2,16 +2,12 @@ import { errorAxios } from "@/lib/errorHandle";
 import { Input } from "./Input";
 import NotifyMessageItem from "./notify-message-item";
 import { useLoading } from "@/providers/LoaderProvider";
-import { useUser } from "@/providers/UserProvider";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getLastMessages } from "@/apis/message";
 
 export default function NotifyBox() {
   const loader = useLoading();
-  const { user } = useUser();
   const [lastMessages, setLastMessages] = useState([]);
-
-  const socketRef = useRef<WebSocket | null>(null);
 
   const fetchLastMessage = async () => {
     try {
@@ -28,30 +24,11 @@ export default function NotifyBox() {
       loader?.setLoading(false);
     }
   };
+
   useEffect(() => {
-    socketRef.current = new WebSocket(
-      (process.env.NEXT_PUBLIC_WEB_SOCKET || "") + "/notify/" + user.id
-    );
-    socketRef.current.onopen = async () => {
-      await fetchLastMessage();
-      console.log("notify connection open");
-    };
-    socketRef.current.onmessage = async (event) => {
-      const data = JSON.parse(event.data);
-      await fetchLastMessage();
-    };
-    socketRef.current.onclose = () => {
-      console.log("notify connection closed");
-    };
-    socketRef.current.onerror = (error) => {
-      console.log("notify error : ", error);
-    };
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.close();
-      }
-    };
-  }, [user]);
+    fetchLastMessage();
+  }, []);
+
   return (
     <div className="w-full">
       {/* search chat */}
