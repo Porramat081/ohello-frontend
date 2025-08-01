@@ -5,14 +5,22 @@ import { Textarea } from "./Textarea";
 import { Send } from "lucide-react";
 import { useLoading } from "@/providers/LoaderProvider";
 import { errorAxios } from "@/lib/errorHandle";
-import { getChatByRoomId } from "@/apis/message";
+import { createMessage, getChatByRoomId } from "@/apis/message";
 import { formatDateWithAmPm, formatMonthYear, genAbbration } from "@/lib/utils";
 import DateHeader from "./messageComponents/DateHeader";
+import {
+  ChannelProvider,
+  useChannel,
+  useConnectionStateListener,
+} from "ably/react";
 
 interface MessageBoxProps {
   targetId: string;
   handleChangeRoom: (rid: string) => void;
   userId: string;
+  userFullName: string;
+  roomId: string;
+  setRoomId: (rid: string) => void;
 }
 
 export default function MessageBox(props: MessageBoxProps) {
@@ -20,12 +28,8 @@ export default function MessageBox(props: MessageBoxProps) {
   const [targetUser, setTargetUser] = useState<any>(null);
   const [recievedMessages, setRecievedMessages] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const socketRef = useRef<WebSocket | null>(null);
-  const notifyRef = useRef<WebSocket | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const [roomId, setRoomId] = useState("");
 
   const loader = useLoading();
 
@@ -35,7 +39,7 @@ export default function MessageBox(props: MessageBoxProps) {
       if (props.targetId) {
         const chats = await getChatByRoomId(props.targetId, page);
         if (chats.id) {
-          setRoomId(chats.id);
+          props.setRoomId(chats.id);
         }
         if (chats.message?.length) {
           setRecievedMessages((prev) => [...chats.message]);
@@ -55,7 +59,7 @@ export default function MessageBox(props: MessageBoxProps) {
 
   useEffect(() => {
     fetchChat();
-  }, []);
+  }, [props.targetId]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -64,6 +68,21 @@ export default function MessageBox(props: MessageBoxProps) {
     }
   }, [recievedMessages]);
 
+  const { channel } = useChannel(props.roomId, "message", (receiveMessage) => {
+    const receivedObj = JSON.parse(receiveMessage.data);
+    if (receivedObj.writerId === props.userId) {
+      setRecievedMessages((prev) => [
+        ...prev,
+        { ...receivedObj, isReceived: false },
+      ]);
+    } else {
+      setRecievedMessages((prev) => [
+        ...prev,
+        { ...receivedObj, isReceived: true },
+      ]);
+    }
+  });
+
   const handleChangeMessage = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
   };
@@ -71,27 +90,21 @@ export default function MessageBox(props: MessageBoxProps) {
     if (!message.trim()) {
       return;
     }
+
     const dateNow = new Date().toString();
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(
-        JSON.stringify({
-          message,
-          createdAt: dateNow,
-          notifyRoom: props.targetId,
-        })
-      );
-    }
-    if (notifyRef.current && notifyRef.current.readyState === WebSocket.OPEN) {
-      notifyRef.current.send(JSON.stringify({ roomId: roomId }));
-    }
-    setRecievedMessages((prev) => [
-      ...prev,
-      { content: message, createdAt: dateNow, status: "Unread" },
-    ]);
+    const newMessage = {
+      content: message,
+      createdAt: dateNow,
+      status: "Unread",
+      writerId: props.userId,
+    };
+    const sendMessage = JSON.stringify(newMessage);
+    channel.publish("message", sendMessage);
+    createMessage(props.roomId, message);
     setMessage(() => "");
   };
 
-  if (!roomId || !targetUser) {
+  if (!props.roomId || !targetUser) {
     return <div>Please Select Chat To Start</div>;
   }
 
