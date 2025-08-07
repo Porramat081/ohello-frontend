@@ -12,6 +12,8 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import * as Ably from "ably";
 import { AblyProvider, ChannelProvider } from "ably/react";
+import { Button } from "@/components/Button";
+import Link from "next/link";
 
 export default function MessagePage() {
   const [targetId, setTargetId] = useState<string>("");
@@ -95,8 +97,17 @@ export default function MessagePage() {
                 userFullName={user.firstName + " " + user.surname}
               />
             </ChannelProvider>
-          ) : (
+          ) : roomList?.length ? (
             <div>Please Select Chat To Start</div>
+          ) : (
+            <div className="flex flex-col items-center gap-5 mt-3">
+              <div className="text-center">You don't have any friends</div>
+              <div className="">
+                <Button className="cursor-pointer" asChild>
+                  <Link href={"/friend"}>Find New Friends</Link>
+                </Button>
+              </div>
+            </div>
           )}
         </div>
       </div>
