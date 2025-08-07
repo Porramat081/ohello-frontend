@@ -8,11 +8,7 @@ import { errorAxios } from "@/lib/errorHandle";
 import { createMessage, getChatByRoomId } from "@/apis/message";
 import { formatDateWithAmPm, formatMonthYear, genAbbration } from "@/lib/utils";
 import DateHeader from "./messageComponents/DateHeader";
-import {
-  ChannelProvider,
-  useChannel,
-  useConnectionStateListener,
-} from "ably/react";
+import { useChannel } from "ably/react";
 
 interface MessageBoxProps {
   targetId: string;
@@ -70,17 +66,8 @@ export default function MessageBox(props: MessageBoxProps) {
 
   const { channel } = useChannel(props.roomId, "message", (receiveMessage) => {
     const receivedObj = JSON.parse(receiveMessage.data);
-    if (receivedObj.writerId === props.userId) {
-      setRecievedMessages((prev) => [
-        ...prev,
-        { ...receivedObj, isReceived: false },
-      ]);
-    } else {
-      setRecievedMessages((prev) => [
-        ...prev,
-        { ...receivedObj, isReceived: true },
-      ]);
-    }
+    setRecievedMessages((prev) => [...prev, receivedObj]);
+    channel.publish("notify", receiveMessage.data);
   });
 
   const handleChangeMessage = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -153,7 +140,7 @@ export default function MessageBox(props: MessageBoxProps) {
                   new Date(item1.createdAt).getTime() -
                   new Date(item2.createdAt).getTime()
               )}
-              targetId={props.targetId}
+              userId={props.userId}
             />
           ) : (
             <div className="h-full flex items-center justify-center">
