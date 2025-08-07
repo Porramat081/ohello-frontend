@@ -3,7 +3,7 @@ import SenderMessage from "./SenderMessage";
 
 interface DateHeaderProps {
   messageArr: any[];
-  targetId: string;
+  userId: string;
 }
 
 function groupByDay(arr: any[]) {
@@ -17,8 +17,6 @@ function groupByDay(arr: any[]) {
     groups.get(key).push(item);
   }
 
-  console.log(Array.from(groups.values()));
-
   return Array.from(groups.values());
 }
 
@@ -27,7 +25,7 @@ export default function DateHeader(props: DateHeaderProps) {
     <div>
       {groupByDay(props.messageArr).map((item, index) => (
         <div key={index}>
-          <div className="text-center mt-2">
+          <div className="text-center">
             {formatMonthYear(item[0].createdAt, true)}
           </div>
           {item.map((item2: any, index2: number) => (
@@ -35,7 +33,7 @@ export default function DateHeader(props: DateHeaderProps) {
               status={item2.status}
               createdAt={item2.createdAt}
               content={item2.content}
-              isReceived={item2.isReceived || item2.writerId === props.targetId}
+              isReceived={props.userId !== item2.writerId}
               key={index + " " + index2}
             />
           ))}

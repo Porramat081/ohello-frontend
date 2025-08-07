@@ -14,39 +14,6 @@ import { useLoading } from "@/providers/LoaderProvider";
 import { PostStatus } from "@/types/post";
 import PostStatusTab from "./PostStatusTab";
 
-const mockStory = [
-  {
-    author: "name 1",
-    picUrl:
-      "https://cdn.pixabay.com/photo/2025/04/16/18/22/snow-leopard-9538312_1280.jpg",
-  },
-  {
-    author: "name 2",
-    picUrl:
-      "https://cdn.pixabay.com/photo/2025/04/16/18/22/snow-leopard-9538312_1280.jpg",
-  },
-  {
-    author: "name 3",
-    picUrl:
-      "https://cdn.pixabay.com/photo/2025/04/16/18/22/snow-leopard-9538312_1280.jpg",
-  },
-  {
-    author: "name 4",
-    picUrl:
-      "https://cdn.pixabay.com/photo/2025/04/16/18/22/snow-leopard-9538312_1280.jpg",
-  },
-  {
-    author: "name 5",
-    picUrl:
-      "https://cdn.pixabay.com/photo/2025/04/16/18/22/snow-leopard-9538312_1280.jpg",
-  },
-  {
-    author: "name 6",
-    picUrl:
-      "https://cdn.pixabay.com/photo/2025/04/16/18/22/snow-leopard-9538312_1280.jpg",
-  },
-];
-
 export default function Mainboard() {
   const [openStory, setOpenStory] = useState(false);
   const [feedStatus, setFeedStatus] = useState<PostStatus>("Public");
@@ -88,7 +55,7 @@ export default function Mainboard() {
     <div>
       <h2 className="text-primary font-extrabold pl-3 pt-1">Home</h2>
       {/* Story Tab */}
-      {user && user.status === "Active" && (
+      {/* {user && user.status === "Active" && (
         <Carousel className="flex items-center" opts={{ align: "center" }}>
           <CarouselItem
             className="basis-auto pr-3"
@@ -104,7 +71,7 @@ export default function Mainboard() {
             ))}
           </CarouselContent>
         </Carousel>
-      )}
+      )} */}
 
       {/* Feed tab */}
       <div className="mt-4 relative">

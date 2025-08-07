@@ -10,11 +10,15 @@ import { useLoading } from "@/providers/LoaderProvider";
 import { useUser } from "@/providers/UserProvider";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import * as Ably from "ably";
+import { AblyProvider, ChannelProvider } from "ably/react";
 
 export default function MessagePage() {
   const [targetId, setTargetId] = useState<string>("");
 
   const [roomList, setRoomList] = useState<any[]>([]);
+
+  const [roomId, setRoomId] = useState("");
 
   const { user } = useUser();
   const loader = useLoading();
@@ -22,6 +26,8 @@ export default function MessagePage() {
   const searchParams = useSearchParams();
   const firstNameParam = searchParams.get("f");
   const surnameParam = searchParams.get("s");
+
+  const client = new Ably.Realtime({ key: process.env.NEXT_PUBLIC_ABLY_KEY });
 
   const fetchRoomChat = async () => {
     try {
@@ -68,21 +74,32 @@ export default function MessagePage() {
     setTargetId(rid);
   };
   return (
-    <div className="pt-2">
-      <h2 className="text-sm font-bold text-primary px-2">Messages</h2>
-      <div className="flex flex-col">
-        <MessageList
-          targetId={targetId}
-          roomList={roomList}
-          handleChangeRoom={handleChangeRoom}
-        />
-        <Separator className="my-2" />
-        <MessageBox
-          targetId={targetId}
-          handleChangeRoom={handleChangeRoom}
-          userId={user.id}
-        />
+    <AblyProvider client={client}>
+      <div className="pt-2">
+        <h2 className="text-sm font-bold text-primary px-2">Messages</h2>
+        <div className="flex flex-col">
+          <MessageList
+            targetId={targetId}
+            roomList={roomList}
+            handleChangeRoom={handleChangeRoom}
+          />
+          <Separator className="my-2" />
+          {targetId ? (
+            <ChannelProvider channelName={roomId}>
+              <MessageBox
+                roomId={roomId}
+                setRoomId={setRoomId}
+                targetId={targetId}
+                handleChangeRoom={handleChangeRoom}
+                userId={user.id}
+                userFullName={user.firstName + " " + user.surname}
+              />
+            </ChannelProvider>
+          ) : (
+            <div>Please Select Chat To Start</div>
+          )}
+        </div>
       </div>
-    </div>
+    </AblyProvider>
   );
 }

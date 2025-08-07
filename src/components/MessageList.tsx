@@ -10,7 +10,6 @@ interface MessageListProps {
 }
 
 export default function MessageList(props: MessageListProps) {
-  console.log(props.roomList);
   return (
     <div className="flex flex-col lg:border-r-1">
       <div className="my-2 px-2">

@@ -17,7 +17,7 @@ import { useAuthorize } from "@/hooks/useForm";
 import { useUser } from "@/providers/UserProvider";
 
 interface MenuUserProps {
-  user: UserType;
+  user: UserType & { profilePicUrl: string };
 }
 
 export default function MenuUser({ user }: MenuUserProps) {
@@ -29,7 +29,7 @@ export default function MenuUser({ user }: MenuUserProps) {
     <div className="flex items-start flex-col gap-5">
       <div className="pt-2 px-2 mb-3">
         <Avatar className="border border-foreground size-13">
-          <AvatarImage src={user?.profilePicUrl?.pictureUrl} />
+          <AvatarImage src={user.profilePicUrl} />
           <AvatarFallback className="text-2xl font-semibold">
             {genAbbration(user?.firstName, user?.surname)}
           </AvatarFallback>
@@ -38,7 +38,7 @@ export default function MenuUser({ user }: MenuUserProps) {
       <MenuUserButton icon={Home} title="Home" href="/" />
       <MenuUserButton icon={MessageCircle} title="Messages" href="/message" />
       <MenuUserButton icon={Users} title="Friends" href="/friend" />
-      <MenuUserButton icon={History} title="History" href="/history" />
+      {/* <MenuUserButton icon={History} title="History" href="/history" /> */}
       <MenuUserButton icon={UserRoundCog} title="My Profile" href="/profile" />
       <Button
         onClick={() => {

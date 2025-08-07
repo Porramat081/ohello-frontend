@@ -5,14 +5,18 @@ import { Textarea } from "./Textarea";
 import { Send } from "lucide-react";
 import { useLoading } from "@/providers/LoaderProvider";
 import { errorAxios } from "@/lib/errorHandle";
-import { getChatByRoomId } from "@/apis/message";
+import { createMessage, getChatByRoomId } from "@/apis/message";
 import { formatDateWithAmPm, formatMonthYear, genAbbration } from "@/lib/utils";
 import DateHeader from "./messageComponents/DateHeader";
+import { useChannel } from "ably/react";
 
 interface MessageBoxProps {
   targetId: string;
   handleChangeRoom: (rid: string) => void;
   userId: string;
+  userFullName: string;
+  roomId: string;
+  setRoomId: (rid: string) => void;
 }
 
 export default function MessageBox(props: MessageBoxProps) {
@@ -20,12 +24,8 @@ export default function MessageBox(props: MessageBoxProps) {
   const [targetUser, setTargetUser] = useState<any>(null);
   const [recievedMessages, setRecievedMessages] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const socketRef = useRef<WebSocket | null>(null);
-  const notifyRef = useRef<WebSocket | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const [roomId, setRoomId] = useState("");
 
   const loader = useLoading();
 
@@ -35,7 +35,7 @@ export default function MessageBox(props: MessageBoxProps) {
       if (props.targetId) {
         const chats = await getChatByRoomId(props.targetId, page);
         if (chats.id) {
-          setRoomId(chats.id);
+          props.setRoomId(chats.id);
         }
         if (chats.message?.length) {
           setRecievedMessages((prev) => [...chats.message]);
@@ -54,82 +54,8 @@ export default function MessageBox(props: MessageBoxProps) {
   };
 
   useEffect(() => {
-    if (!props.targetId) return;
-
     fetchChat();
-
-    if (!roomId) return;
-    //ws connection
-    socketRef.current = new WebSocket(
-      (process.env.NEXT_PUBLIC_WEB_SOCKET || "") + "/wsMessage/" + `${roomId}`
-    );
-
-    //notify connection
-    notifyRef.current = new WebSocket(
-      (process.env.NEXT_PUBLIC_WEB_SOCKET || "") +
-        "/notify/" +
-        `${props.targetId}`
-    );
-
-    //ws open
-    socketRef.current.onopen = async () => {
-      console.log("ws connection open");
-    };
-    //listen message
-    socketRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      // if (data.read === "reading") {
-      //   alert("reading");
-      // }
-
-      setRecievedMessages((prev) => [
-        ...prev,
-        {
-          isReceived: data.writerId !== props.userId,
-          content: data.message as string,
-          createdAt: data.createdAt as string,
-        },
-      ]);
-    };
-    //connection closed
-    socketRef.current.onclose = () => {
-      //setRoomId("");
-      console.log("WebSocket connection closed");
-    };
-    //connection error
-    socketRef.current.onerror = (error) => {
-      props.handleChangeRoom("");
-      setRoomId("");
-      console.log("WebSocket error : ", error);
-    };
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.close();
-      }
-      if (notifyRef.current) {
-        notifyRef.current.close();
-      }
-    };
-  }, [roomId, props.targetId]);
-
-  // useEffect(() => {
-  //   const container = containerRef.current;
-  //   const handleScroll = () => {
-  //     if (!container) return;
-  //     if (container.scrollTop === 0) {
-  //       setPage((prev) => prev + 1);
-  //       fetchChat();
-  //     }
-  //   };
-  //   if (container) {
-  //     container.addEventListener("scroll", handleScroll);
-  //   }
-
-  //   return () => {
-  //     container?.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, [fetchChat]);
+  }, [props.targetId]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -138,6 +64,12 @@ export default function MessageBox(props: MessageBoxProps) {
     }
   }, [recievedMessages]);
 
+  const { channel } = useChannel(props.roomId, "message", (receiveMessage) => {
+    const receivedObj = JSON.parse(receiveMessage.data);
+    setRecievedMessages((prev) => [...prev, receivedObj]);
+    channel.publish("notify", receiveMessage.data);
+  });
+
   const handleChangeMessage = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
   };
@@ -145,26 +77,21 @@ export default function MessageBox(props: MessageBoxProps) {
     if (!message.trim()) {
       return;
     }
+
     const dateNow = new Date().toString();
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(
-        JSON.stringify({
-          message,
-          createdAt: dateNow,
-          notifyRoom: props.targetId,
-        })
-      );
-    }
-    if (notifyRef.current && notifyRef.current.readyState === WebSocket.OPEN) {
-      notifyRef.current.send(JSON.stringify({ roomId: roomId }));
-    }
-    setRecievedMessages((prev) => [
-      ...prev,
-      { content: message, createdAt: dateNow, status: "Unread" },
-    ]);
+    const newMessage = {
+      content: message,
+      createdAt: dateNow,
+      status: "Unread",
+      writerId: props.userId,
+    };
+    const sendMessage = JSON.stringify(newMessage);
+    channel.publish("message", sendMessage);
+    createMessage(props.roomId, message);
     setMessage(() => "");
   };
-  if (!roomId || !targetUser) {
+
+  if (!props.roomId || !targetUser) {
     return <div>Please Select Chat To Start</div>;
   }
 
@@ -213,7 +140,7 @@ export default function MessageBox(props: MessageBoxProps) {
                   new Date(item1.createdAt).getTime() -
                   new Date(item2.createdAt).getTime()
               )}
-              targetId={props.targetId}
+              userId={props.userId}
             />
           ) : (
             <div className="h-full flex items-center justify-center">

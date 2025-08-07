@@ -7,6 +7,7 @@ import Logo from "@/components/Logo";
 import HeaderBtn from "@/components/HeaderBtn";
 import { UserProvider } from "@/providers/UserProvider";
 import { LoaderProvider } from "@/providers/LoaderProvider";
+import { NotifyProvider } from "@/providers/NotifyProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -42,20 +43,22 @@ export default function RootLayout({ children }: RootLayoutProps) {
           enableSystem
           disableTransitionOnChange
         >
-          <LoaderProvider>
-            <UserProvider>
-              <div className="min-h-svh antialiased relative min-w-[300px]">
-                <div className="py-2 flex justify-between pl-3 sm:pl-0 sm:justify-center items-center bg-primary sticky top-0 left-0 w-full z-30">
-                  <Logo />
-                  <HeaderBtn />
+          <NotifyProvider>
+            <LoaderProvider>
+              <UserProvider>
+                <div className="min-h-svh antialiased relative min-w-[300px]">
+                  <div className="py-2 flex justify-between pl-3 sm:pl-0 sm:justify-center items-center bg-primary sticky top-0 left-0 w-full z-30">
+                    <Logo />
+                    <HeaderBtn />
+                  </div>
+                  {children}
                 </div>
-                {children}
-              </div>
 
-              <Toaster />
-              <ToastContainer />
-            </UserProvider>
-          </LoaderProvider>
+                <Toaster />
+                <ToastContainer />
+              </UserProvider>
+            </LoaderProvider>
+          </NotifyProvider>
         </ThemeProvider>
       </body>
     </html>
