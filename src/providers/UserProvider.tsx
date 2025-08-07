@@ -54,7 +54,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     fetchUser();
-    console.log(user);
   }, []);
 
   return (
