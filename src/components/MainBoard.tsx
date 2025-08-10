@@ -76,7 +76,7 @@ export default function Mainboard() {
       {/* Feed tab */}
       <div className="mt-4 relative">
         <div className="sticky top-[0.03rem] z-10">
-          {user.id && (
+          {user?.id && (
             <PostStatusTab
               isMain={true}
               value={feedStatus}
