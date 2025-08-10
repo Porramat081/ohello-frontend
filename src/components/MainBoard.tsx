@@ -75,15 +75,15 @@ export default function Mainboard() {
 
       {/* Feed tab */}
       <div className="mt-4 relative">
-        <div className="sticky top-[0.03rem] z-10">
-          {user.id && (
+        {/* <div className="sticky top-[0.03rem] z-10">
+          {user?.id && (
             <PostStatusTab
               isMain={true}
               value={feedStatus}
               setValue={setFeedStatus}
             />
           )}
-        </div>
+        </div> */}
         <Separator />
 
         <div className="flex flex-col gap-2">
