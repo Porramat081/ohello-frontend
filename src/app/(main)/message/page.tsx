@@ -10,7 +10,6 @@ import { useLoading } from "@/providers/LoaderProvider";
 import { useUser } from "@/providers/UserProvider";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import * as Ably from "ably";
 import { AblyProvider, ChannelProvider } from "ably/react";
 import { Button } from "@/components/Button";
 import Link from "next/link";
@@ -20,6 +19,8 @@ export default function MessagePage() {
 
   const [roomList, setRoomList] = useState<any[]>([]);
 
+  const [client, setClient] = useState<any>(null);
+
   const [roomId, setRoomId] = useState("");
 
   const { user } = useUser();
@@ -28,8 +29,6 @@ export default function MessagePage() {
   const searchParams = useSearchParams();
   const firstNameParam = searchParams.get("f");
   const surnameParam = searchParams.get("s");
-
-  const client = new Ably.Realtime({ key: process.env.NEXT_PUBLIC_ABLY_KEY });
 
   const fetchRoomChat = async () => {
     try {
@@ -45,11 +44,24 @@ export default function MessagePage() {
     }
   };
 
+  const fetchClient = async () => {
+    try {
+      if (typeof window !== "undefined") {
+        const { Realtime } = await import("ably");
+        const res = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_KEY });
+        setClient(res);
+      }
+    } catch (error) {
+      console.log("can not fetch client");
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       changeRoute();
     } else {
       fetchRoomChat();
+      fetchClient();
     }
   }, [user]);
 
@@ -76,41 +88,45 @@ export default function MessagePage() {
     setTargetId(rid);
   };
   return (
-    <AblyProvider client={client}>
-      <div className="pt-2">
-        <h2 className="text-sm font-bold text-primary px-2">Messages</h2>
-        <div className="flex flex-col">
-          <MessageList
-            targetId={targetId}
-            roomList={roomList}
-            handleChangeRoom={handleChangeRoom}
-          />
-          <Separator className="my-2" />
-          {targetId ? (
-            <ChannelProvider channelName={roomId}>
-              <MessageBox
-                roomId={roomId}
-                setRoomId={setRoomId}
+    <>
+      {client && (
+        <AblyProvider client={client}>
+          <div className="pt-2">
+            <h2 className="text-sm font-bold text-primary px-2">Messages</h2>
+            <div className="flex flex-col">
+              <MessageList
                 targetId={targetId}
+                roomList={roomList}
                 handleChangeRoom={handleChangeRoom}
-                userId={user.id}
-                userFullName={user.firstName + " " + user.surname}
               />
-            </ChannelProvider>
-          ) : roomList?.length ? (
-            <div>Please Select Chat To Start</div>
-          ) : (
-            <div className="flex flex-col items-center gap-5 mt-3">
-              <div className="text-center">You don't have any friends</div>
-              <div className="">
-                <Button className="cursor-pointer" asChild>
-                  <Link href={"/friend"}>Find New Friends</Link>
-                </Button>
-              </div>
+              <Separator className="my-2" />
+              {targetId ? (
+                <ChannelProvider channelName={roomId}>
+                  <MessageBox
+                    roomId={roomId}
+                    setRoomId={setRoomId}
+                    targetId={targetId}
+                    handleChangeRoom={handleChangeRoom}
+                    userId={user.id}
+                    userFullName={user.firstName + " " + user.surname}
+                  />
+                </ChannelProvider>
+              ) : roomList?.length ? (
+                <div>Please Select Chat To Start</div>
+              ) : (
+                <div className="flex flex-col items-center gap-5 mt-3">
+                  <div className="text-center">You don't have any friends</div>
+                  <div className="">
+                    <Button className="cursor-pointer" asChild>
+                      <Link href={"/friend"}>Find New Friends</Link>
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
-    </AblyProvider>
+          </div>
+        </AblyProvider>
+      )}
+    </>
   );
 }
