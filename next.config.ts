@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "http://67.219.107.240:8080/api/:path*",
+      },
+    ];
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
